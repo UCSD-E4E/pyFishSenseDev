@@ -15,6 +15,7 @@ scikit-image = "^0.24.0"
 rawpy = "^0.22.0"
 appdirs = "^1.4.4"
 onnxruntime-gpu = "^1.19.2"
+kornia = "^0.7.3"
 
 
 [tool.poetry.group.dev.dependencies]
