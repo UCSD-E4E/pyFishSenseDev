@@ -36,6 +36,6 @@ class OnlineMLModel(ABC):
 
     def download_model(self) -> Path:
         return self._download_file(
-            self._model_url(),
-            self._model_path(),
+            self._model_url,
+            self._model_path,
         ).as_posix()
