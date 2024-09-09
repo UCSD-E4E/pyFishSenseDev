@@ -10,22 +10,20 @@ from pyfishsensedev.fish.fish_segmentation_fishial import FishSegmentationFishia
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
 class FishSegmentationFishialPyTorch(FishSegmentationFishial):
-    MODEL_URL = (
-        "https://storage.googleapis.com/fishial-ml-resources/segmentation_21_08_2023.ts"
-    )
-    MODEL_PATH = (
-        FishSegmentationFishial._get_model_directory() / "models" / "fishial.ts"
-    )
-
     def __init__(self, device: str):
         super().__init__()
         self.device = device
 
-        self.model_path = self._download_file(
-            FishSegmentationFishialPyTorch.MODEL_URL,
-            FishSegmentationFishialPyTorch.MODEL_PATH,
-        ).as_posix()
+        self.model_path = self.download_model().as_posix()
         self.model = torch.jit.load(self.model_path).to(device).eval()
+
+    @property
+    def _model_path(self) -> Path:
+        self._model_cache_path / "fishial.ts"
+
+    @property
+    def _model_url(self) -> str:
+        return "https://storage.googleapis.com/fishial-ml-resources/segmentation_21_08_2023.ts"
 
     def unwarp_tensor(self, tensor: Iterable[torch.Tensor]) -> Tuple:
         return (t.cpu().numpy() for t in tensor)

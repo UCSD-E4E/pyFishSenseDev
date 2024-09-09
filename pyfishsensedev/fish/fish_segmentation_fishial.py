@@ -10,24 +10,16 @@ from requests import get
 
 from pyfishsensedev import __version__
 from pyfishsensedev.fish.fish_segmentation import FishSegmentation
+from pyfishsensedev.library.online_ml_model import OnlineMLModel
 
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
-class FishSegmentationFishial(FishSegmentation, ABC):
+class FishSegmentationFishial(FishSegmentation, OnlineMLModel, ABC):
     MIN_SIZE_TEST = 800
     MAX_SIZE_TEST = 1333
 
     SCORE_THRESHOLD = 0.3
     MASK_THRESHOLD = 0.5
-
-    def _get_model_directory() -> Path:
-        return Path(
-            user_cache_dir(
-                appname="pyFishSenseDev",
-                appauthor="Engineers for Exploration",
-                version=__version__,
-            )
-        )
 
     @abstractmethod
     def unwarp_tensor(self, tensor: Iterable) -> Tuple:
