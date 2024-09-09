@@ -19,7 +19,7 @@ class FishSegmentationFishialPyTorch(FishSegmentationFishial):
 
     @property
     def _model_path(self) -> Path:
-        self._model_cache_path / "fishial.ts"
+        return self._model_cache_path / "fishial.ts"
 
     @property
     def _model_url(self) -> str:

@@ -17,7 +17,7 @@ class FishSegmentationFishialOnnx(FishSegmentationFishial):
 
     @property
     def _model_path(self) -> Path:
-        self._model_cache_path / "fishial.onnx"
+        return self._model_cache_path / "fishial.onnx"
 
     @property
     def _model_url(self) -> str:
