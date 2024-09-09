@@ -15,7 +15,7 @@ def _get_cache_directory() -> Path:
     )
 
     if not directory.exists():
-        directory.mkdir(exist_ok=True)
+        directory.mkdir(exist_ok=True, parents=True)
 
     return directory
 
