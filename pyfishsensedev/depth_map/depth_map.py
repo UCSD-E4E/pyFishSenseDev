@@ -33,9 +33,9 @@ class DepthMap(ABC):
         image_height: int | float,
         lens_calibration: LensCalibration,
     ) -> np.ndarray:
-        depth_coordinate = self._get_depth_coordinate(
-            image_coordinate, image_width, image_height
-        )
+        depth_coordinate = np.floor(
+            self._get_depth_coordinate(image_coordinate, image_width, image_height)
+        ).astype(int)
 
         depth = self.depth_map[depth_coordinate]
 
