@@ -37,7 +37,7 @@ class DepthMap(ABC):
             self._get_depth_coordinate(image_coordinate, image_width, image_height)
         ).astype(int)
 
-        depth = self.depth_map[depth_coordinate]
+        depth = self.depth_map[depth_coordinate[0], depth_coordinate[1]]
 
         return compute_world_point_from_depth(
             image_coordinate, depth, lens_calibration.inverted_camera_matrix
