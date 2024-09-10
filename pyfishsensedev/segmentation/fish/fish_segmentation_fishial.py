@@ -4,17 +4,16 @@ from typing import Iterable, List, Tuple
 
 import cv2
 import numpy as np
-from appdirs import user_cache_dir
 from PIL import Image
 from requests import get
 
 from pyfishsensedev import __version__
-from pyfishsensedev.fish.fish_segmentation import FishSegmentation
 from pyfishsensedev.library.online_ml_model import OnlineMLModel
+from pyfishsensedev.segmentation.segmentation import Segmentation
 
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
-class FishSegmentationFishial(FishSegmentation, OnlineMLModel, ABC):
+class FishSegmentationFishial(Segmentation, OnlineMLModel, ABC):
     MIN_SIZE_TEST = 800
     MAX_SIZE_TEST = 1333
 

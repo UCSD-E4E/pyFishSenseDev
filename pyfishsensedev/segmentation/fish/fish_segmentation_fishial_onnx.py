@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 import onnxruntime
 
-from pyfishsensedev.fish.fish_segmentation_fishial import FishSegmentationFishial
+from pyfishsensedev.segmentation.fish.fish_segmentation_fishial import FishSegmentationFishial
 
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py

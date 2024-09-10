@@ -4,9 +4,18 @@ from typing import Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+from pyfishsensedev.points_of_interest.points_of_interest_detector import (
+    PointsOfInterestDetector,
+)
 
-class FishHeadTailDetector:
-    def find_head_tail(self, mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
+
+class PcaPointsOfInterestDetector(PointsOfInterestDetector):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def find_points_of_interest(
+        self, mask: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         # Find all the nonzero points.  These are the mask.
         y, x = mask.nonzero()
         x_min, x_max, y_min, y_max = [x.min(), x.max(), y.min(), y.max()]
