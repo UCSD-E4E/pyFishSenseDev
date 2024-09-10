@@ -30,11 +30,6 @@ class PlaneDetector(ABC):
     def _get_points_body_space(self) -> np.ndarray | None:
         raise NotImplementedError
 
-    def _prepare_for_pickle(self):
-        # Force the points to be cached.
-        _ = self.points_image_space
-        _ = self.points_image_space
-
     @property
     def points_image_space(self) -> np.ndarray | None:
         if self._points_image_space is None:
@@ -48,6 +43,11 @@ class PlaneDetector(ABC):
             self._points_body_space = self._get_points_body_space()
 
         return self._points_body_space
+
+    def detect(self):
+        # Force the points to be cached.
+        _ = self.points_image_space
+        _ = self.points_image_space
 
     def is_valid(self) -> bool:
         return (
