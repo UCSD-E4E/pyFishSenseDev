@@ -87,10 +87,10 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import torch
 
-    from pyfishsensedev.fish import FishSegmentationFishialPyTorch
     from pyfishsensedev.image import ImageRectifier
     from pyfishsensedev.image.image_processors.raw_processor import RawProcessor
     from pyfishsensedev.laser.laser_detector import LaserDetector
+    from pyfishsensedev.segmentation.fish import FishSegmentationFishialPyTorch
 
     raw_processor = RawProcessor()
     raw_processor_dark = RawProcessor(enable_histogram_equalization=False)
@@ -118,8 +118,10 @@ if __name__ == "__main__":
     mask = np.zeros_like(segmentations, dtype=bool)
     mask[segmentations == segmentations[coords[1], coords[0]]] = True
 
-    fish_head_tail_detector = FishHeadTailDetector()
-    left_coord, right_coord = fish_head_tail_detector.find_head_tail(mask, img8)
+    fish_head_tail_detector = PcaPointsOfInterestDetector()
+    left_coord, right_coord = fish_head_tail_detector.find_points_of_interest(
+        mask, img8
+    )
 
     plt.imshow(img8)
     plt.plot(left_coord[0], left_coord[1], "r.")
