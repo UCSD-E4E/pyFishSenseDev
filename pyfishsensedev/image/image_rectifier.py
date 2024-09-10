@@ -3,17 +3,19 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from pyfishsensedev.library.array_read_write import read_camera_calibration
+from pyfishsensedev.calibration import LensCalibration
 
 
 class ImageRectifier:
-    def __init__(self, lens_calibration_path: Path):
-        self.calibration_matrix, self.distortion_coeffs = read_camera_calibration(
-            lens_calibration_path.as_posix()
-        )
+    def __init__(self, lens_calibration: LensCalibration):
+        self._lens_calibration = lens_calibration
 
     def rectify(self, img: np.ndarray) -> np.ndarray:
-        return cv2.undistort(img, self.calibration_matrix, self.distortion_coeffs)
+        return cv2.undistort(
+            img,
+            self._lens_calibration.camera_matrix,
+            self._lens_calibration.distortion_coefficients,
+        )
 
 
 if __name__ == "__main__":
