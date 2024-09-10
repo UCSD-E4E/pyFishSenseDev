@@ -23,11 +23,13 @@ class LaserDepthMap(DepthMap):
     def depth_map(self) -> np.ndarray:
         return np.array(
             [
-                compute_world_point(
-                    self._laser_calibration.laser_position,
-                    self._laser_calibration.laser_axis,
-                    self._lens_calibration.inverted_camera_matrix,
-                    self._laser_image_position,
-                )
+                [
+                    compute_world_point(
+                        self._laser_calibration.laser_position,
+                        self._laser_calibration.laser_axis,
+                        self._lens_calibration.inverted_camera_matrix,
+                        self._laser_image_position,
+                    )[2]
+                ]
             ]
         )
