@@ -4,25 +4,24 @@ from typing import Tuple
 import numpy as np
 import onnxruntime
 
-from pyfishsensedev.fish.fish_segmentation_fishial import FishSegmentationFishial
+from pyfishsensedev.segmentation.fish.fish_segmentation_fishial import FishSegmentationFishial
 
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
 class FishSegmentationFishialOnnx(FishSegmentationFishial):
-    MODEL_URL = "https://huggingface.co/ccrutchf/fishial/resolve/main/fishial.onnx?download=true"
-    MODEL_PATH = (
-        FishSegmentationFishial._get_model_directory() / "models" / "fishial.onnx"
-    )
-
     def __init__(self) -> None:
         super().__init__()
 
-        self.model_path = self._download_file(
-            FishSegmentationFishialOnnx.MODEL_URL,
-            FishSegmentationFishialOnnx.MODEL_PATH,
-        ).as_posix()
-
+        self.model_path = self.download_model().as_posix()
         self.ort_session = onnxruntime.InferenceSession(self.model_path)
+
+    @property
+    def _model_path(self) -> Path:
+        return self._model_cache_path / "fishial.onnx"
+
+    @property
+    def _model_url(self) -> str:
+        return "https://huggingface.co/ccrutchf/fishial/resolve/main/fishial.onnx?download=true"
 
     def unwarp_tensor(self, tensor: Tuple) -> Tuple:
         return tensor

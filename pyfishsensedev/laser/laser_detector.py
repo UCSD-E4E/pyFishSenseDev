@@ -12,6 +12,7 @@ from pyfishsensedev.library.array_read_write import (
     read_camera_calibration,
     read_laser_calibration,
 )
+from pyfishsensedev.library.online_ml_model import OnlineMLModel
 
 
 class LaserDetectorNetwork(nn.Module):
@@ -41,18 +42,16 @@ class LaserDetectorNetwork(nn.Module):
         return x
 
 
-class LaserDetector:
+class LaserDetector(OnlineMLModel):
     def __init__(
         self,
         lens_calibration_path: Path,
         laser_calibration_path: Path,
         device: str,
-        model_weights_path: Path = None,
     ):
-        if model_weights_path is None:
-            model_weights_path = (
-                Path(__file__).parent.resolve() / "models" / "laser_detection.pth"
-            )
+        super().__init__()
+
+        model_weights_path = self.download_model()
 
         self.calibration_matrix, self.distortion_coeffs = read_camera_calibration(
             lens_calibration_path.as_posix()
@@ -67,6 +66,14 @@ class LaserDetector:
 
         self.model.to(device)
         self.device = device
+
+    @property
+    def _model_path(self) -> Path:
+        return self._model_cache_path / "laser_detector.pth"
+
+    @property
+    def _model_url(self) -> str:
+        return "https://huggingface.co/ccrutchf/laser-detector/resolve/main/laser_detection.pth"
 
     def _get_2d_from_3d(self, vector: np.ndarray) -> np.ndarray:
         homogeneous_coords = vector / vector[2]
