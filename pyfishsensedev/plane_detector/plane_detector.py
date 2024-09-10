@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import cv2
 import numpy as np
 
-from pyfishsensedev.calibration import LensCalibration
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
 from pyfishsensedev.library.laser_parallax import image_coordinate_to_projected_point
 
 

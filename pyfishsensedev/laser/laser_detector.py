@@ -8,7 +8,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from skimage.feature import peak_local_max
 
-from pyfishsensedev.calibration import LaserCalibration, LensCalibration
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
+from pyfishsensedev.calibration.laser_calibration import LaserCalibration
 from pyfishsensedev.library.online_ml_model import OnlineMLModel
 
 

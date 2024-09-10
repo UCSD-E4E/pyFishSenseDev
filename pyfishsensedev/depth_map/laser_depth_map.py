@@ -1,6 +1,7 @@
 import numpy as np
 
-from pyfishsensedev.calibration import LaserCalibration, LensCalibration
+from pyfishsensedev.calibration.laser_calibration import LaserCalibration
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
 from pyfishsensedev.depth_map.depth_map import DepthMap
 from pyfishsensedev.library.laser_parallax import compute_world_points
 
