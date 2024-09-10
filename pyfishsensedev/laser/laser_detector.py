@@ -8,10 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from skimage.feature import peak_local_max
 
-from pyfishsensedev.library.array_read_write import (
-    read_camera_calibration,
-    read_laser_calibration,
-)
+from pyfishsensedev.calibration import LaserCalibration, LensCalibration
 from pyfishsensedev.library.online_ml_model import OnlineMLModel
 
 
@@ -45,20 +42,16 @@ class LaserDetectorNetwork(nn.Module):
 class LaserDetector(OnlineMLModel):
     def __init__(
         self,
-        lens_calibration_path: Path,
-        laser_calibration_path: Path,
+        lens_calibration: LensCalibration,
+        laser_calibration: LaserCalibration,
         device: str,
     ):
         super().__init__()
 
         model_weights_path = self.download_model()
 
-        self.calibration_matrix, self.distortion_coeffs = read_camera_calibration(
-            lens_calibration_path.as_posix()
-        )
-        self.laser_position, self.laser_orientation = read_laser_calibration(
-            laser_calibration_path.as_posix()
-        )
+        self.lens_calibration = lens_calibration
+        self.laser_calibration = laser_calibration
         self.model = LaserDetectorNetwork()
         self.model.load_state_dict(
             torch.load(model_weights_path.as_posix(), map_location=device)
@@ -77,7 +70,7 @@ class LaserDetector(OnlineMLModel):
 
     def _get_2d_from_3d(self, vector: np.ndarray) -> np.ndarray:
         homogeneous_coords = vector / vector[2]
-        return self.calibration_matrix @ homogeneous_coords
+        return self.lens_calibration.camera_matrix @ homogeneous_coords
 
     def _get_line(
         self, one: np.ndarray, two: np.ndarray
@@ -98,8 +91,14 @@ class LaserDetector(OnlineMLModel):
         return (x1, y1), (x2, y2)
 
     def _return_line(self) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-        first_point = self.laser_position + 1 * self.laser_orientation
-        second_point = self.laser_position + 10000 * self.laser_orientation
+        first_point = (
+            self.laser_calibration.laser_position
+            + 1 * self.laser_calibration.laser_axis
+        )
+        second_point = (
+            self.laser_calibration.laser_position
+            + 10000 * self.laser_calibration.laser_axis
+        )
 
         first_2d = self._get_2d_from_3d(first_point)
         second_2d = self._get_2d_from_3d(second_point)

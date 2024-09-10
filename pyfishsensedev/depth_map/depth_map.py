@@ -7,6 +7,7 @@ class DepthMap(ABC):
     def __init__(self) -> None:
         super().__init__()
 
+    @property
     @abstractmethod
-    def get_depth_map(self) -> np.ndarray:
+    def depth_map(self) -> np.ndarray:
         raise NotImplementedError
