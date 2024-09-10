@@ -8,14 +8,13 @@ class CheckerboardDetector(PlaneDetector):
     def __init__(
         self, image: np.ndarray[np.uint8], rows: int, columns: int, square_size: float
     ) -> None:
-        self._image = image
         self._rows = rows
         self._columns = columns
         self._square_size = square_size
 
     def get_points_image_space(self):
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-        gray = cv2.cvtColor(self._image, cv2.COLOR_RGB2GRAY)
+        gray = cv2.cvtColor(self.image, cv2.COLOR_RGB2GRAY)
 
         # find the checkerboard
         ret, corners = cv2.findChessboardCorners(

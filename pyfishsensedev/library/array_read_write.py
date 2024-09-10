@@ -5,7 +5,7 @@
 import io
 import json
 import tarfile
-from datetime import date, datetime
+from datetime import datetime, timezone
 
 import numpy as np
 
@@ -20,13 +20,28 @@ def write_numpy_array(array: np.ndarray, name: str, file: tarfile.TarFile):
         file.addfile(tarinfo, b)
 
 
+def write_camera_calibration(
+    file_path: str, calibration_matrix: np.ndarray, distortion_coefficients: np.ndarray
+):
+    metadata = {"calibrated_date": str(datetime.now(timezone.utc))}
+    with tarfile.open(file_path, "x:gz") as f:
+        with io.StringIO() as s:
+            json.dump(metadata, s, indent=True)
+            bytes = s.getvalue().encode("utf8")
+            with io.BytesIO(bytes) as b:
+                tarinfo = tarfile.TarInfo("metadata.json")
+                tarinfo.size = len(bytes)
+                tarinfo.mtime = int(datetime.now().timestamp())
+                f.addfile(tarinfo, b)
+
+        write_numpy_array(calibration_matrix, "_calibration_matrix.npy")
+        write_numpy_array(distortion_coefficients, "_distortion_coefficients.npy")
+
+
 def write_laser_calibration(
     file_path: str, laser_axis: np.ndarray, laser_pos: np.ndarray
 ):
-    metadata = {
-        "calibrated_date": str(datetime.now()),
-        "dataset_date": str(date(2023, 3, 3)),
-    }
+    metadata = {"calibrated_date": str(datetime.now(timezone.utc))}
     with tarfile.open(file_path, "x:gz") as f:
         with io.StringIO() as s:
             json.dump(metadata, s, indent=True)
