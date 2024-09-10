@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 
-from pyfishsensedev.plane_detector.projectable_plane_detector import ProjectablePlaneDetector
+from pyfishsensedev.plane_detector.projectable_plane_detector import (
+    ProjectablePlaneDetector,
+)
 
 
 class CheckerboardDetector(ProjectablePlaneDetector):
@@ -14,7 +16,7 @@ class CheckerboardDetector(ProjectablePlaneDetector):
         self._columns = columns
         self._square_size = square_size
 
-    def get_points_image_space(self):
+    def _get_points_image_space(self):
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         gray = cv2.cvtColor(self.image, cv2.COLOR_RGB2GRAY)
 
@@ -34,7 +36,7 @@ class CheckerboardDetector(ProjectablePlaneDetector):
         else:
             return None
 
-    def get_points_body_space(self):
+    def _get_points_body_space(self):
         # coordinates of squares in the checkerboard world space
         objp = np.zeros((self._rows * self._columns, 3), np.float32)
         objp[:, :2] = np.mgrid[0 : self._rows, 0 : self._columns].T.reshape(-1, 2)

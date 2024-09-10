@@ -17,8 +17,8 @@ class ProjectablePlaneDetector(PlaneDetector, ABC):
     ) -> np.ndarray | None:
         empty_dist_coeffs = np.zeros((5,))
         ret, rotation_vectors, translation = cv2.solvePnP(
-            self.get_points_body_space(),
-            self.get_points_image_space(),
+            self.points_body_space,
+            self.points_image_space,
             lens_calibration.camera_matrix,
             empty_dist_coeffs,
         )
@@ -39,7 +39,7 @@ class ProjectablePlaneDetector(PlaneDetector, ABC):
         self, lens_calibration: LensCalibration
     ) -> np.ndarray | None:
         transformation = self.get_body_to_camera_space_transform(lens_calibration)
-        body_points = self.get_points_body_space()
+        body_points = self.points_body_space()
 
         if transformation is None or body_points is None:
             return None
