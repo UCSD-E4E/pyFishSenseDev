@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Iterator
 
@@ -8,11 +10,10 @@ from pyfishsensedev.library.array_read_write import (
     read_camera_calibration,
     write_camera_calibration,
 )
+from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
 class LensCalibration:
-    from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
-
     def __init__(
         self,
         camera_matrix: np.ndarray | None = None,
