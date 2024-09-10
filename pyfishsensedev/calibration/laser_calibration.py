@@ -1,12 +1,15 @@
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Self, Tuple
 
 import numpy as np
 
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
+from pyfishsensedev.laser.laser_detector import LaserDetector
 from pyfishsensedev.library.array_read_write import (
     read_laser_calibration,
     write_laser_calibration,
 )
+from pyfishsensedev.library.laser_parallax import atanasov_calibration_method
 from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
@@ -52,5 +55,36 @@ class LaserCalibration:
             self.laser_position,
         )
 
-    def plane_calibrate(self, calibration_planes: Iterator[PlaneDetector]):
-        calibration_planes = [p for p in calibration_planes if p.is_valid()]
+    def plane_calibrate(
+        self,
+        calibration_planes_and_dark_images: Iterator[Tuple[PlaneDetector, np.ndarray]],
+        lens_calibration: LensCalibration,
+        laser_calibration_estimate: Self,
+        device: str,
+    ) -> None:
+        calibration_planes_and_dark_images = [
+            (p, d) for p, d in calibration_planes_and_dark_images if p.is_valid()
+        ]
+
+        laser_detector = LaserDetector(
+            lens_calibration, laser_calibration_estimate, device
+        )
+
+        laser_points = [
+            (p, laser_detector.find_laser(d))
+            for p, d in calibration_planes_and_dark_images
+        ]
+
+        laser_points_3d = [
+            p.project_point_onto_plane_camera_space(l)
+            for p, l in laser_points
+            if l is not None
+        ]
+        laser_points = [l for l in laser_points if l is not None]
+
+        laser_params = atanasov_calibration_method(laser_points_3d)
+
+        self.laser_axis = laser_params[:3]
+
+        self.laser_position = np.zeros(3, dtype=float)
+        self.laser_position[:2] = laser_params[:-2]

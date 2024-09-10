@@ -8,6 +8,8 @@ class CheckerboardDetector(PlaneDetector):
     def __init__(
         self, image: np.ndarray[np.uint8], rows: int, columns: int, square_size: float
     ) -> None:
+        super().__init__(image)
+
         self._rows = rows
         self._columns = columns
         self._square_size = square_size

@@ -109,7 +109,7 @@ class LaserDetector(OnlineMLModel):
         return self._get_line(first_2d_tup, second_2d_tup)
 
     def _get_masked_image_matrix(
-        self, img: np.ndarray
+        self, img: np.ndarray, thickness=75
     ) -> Tuple[np.ndarray | None, np.ndarray | None]:
         # Make sure that the file is a JPG
         if type(img) != np.ndarray:
@@ -119,7 +119,13 @@ class LaserDetector(OnlineMLModel):
             # Get the line
             img_clone = img.copy()
             start_point, end_point = self._return_line()
-            cv2.line(img_clone, start_point, end_point, color=(0, 0, 255), thickness=75)
+            cv2.line(
+                img_clone,
+                start_point,
+                end_point,
+                color=(0, 0, 255),
+                thickness=thickness,
+            )
 
             # Create the mask and the masked image
             mask = cv2.inRange(img_clone, (0, 0, 255), (0, 0, 256)) / 255
@@ -131,7 +137,7 @@ class LaserDetector(OnlineMLModel):
         elif len(np.shape(img)) == 2:
             img_clone = img.copy()
             start_point, end_point = self._return_line()
-            cv2.line(img_clone, start_point, end_point, color=0, thickness=75)
+            cv2.line(img_clone, start_point, end_point, color=0, thickness=thickness)
 
             mask = cv2.inRange(img_clone, 0, 1) / 255
             mask = mask.astype(np.uint8)
