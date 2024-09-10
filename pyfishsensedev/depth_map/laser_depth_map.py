@@ -2,6 +2,7 @@ import numpy as np
 
 from pyfishsensedev.calibration import LaserCalibration, LensCalibration
 from pyfishsensedev.depth_map.depth_map import DepthMap
+from pyfishsensedev.library.laser_parallax import compute_world_points
 
 
 class LaserDepthMap(DepthMap):
@@ -19,4 +20,9 @@ class LaserDepthMap(DepthMap):
 
     @property
     def depth_map(self) -> np.ndarray:
-        pass
+        return compute_world_points(
+            self._laser_calibration.laser_position,
+            self._laser_calibration.laser_axis,
+            self._lens_calibration.inverted_camera_matrix,
+            self._laser_image_position,
+        )

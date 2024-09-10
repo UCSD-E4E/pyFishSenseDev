@@ -2,13 +2,17 @@ import numpy as np
 
 
 def image_coordinate_to_projected_point(
-    image_point: np.ndarray, pixel_pitch_mm: float, focal_length_mm: float
+    image_point: np.ndarray, inverted_camera_matrix: np.ndarray
 ) -> np.ndarray:
     assert isinstance(image_point, np.ndarray)
-    # S += sensor_size_px / 2
-    I_project = image_point * pixel_pitch_mm / 1e3
-    I = np.array([I_project[0], I_project[1], -focal_length_mm / 1e3])
-    return I
+    assert isinstance(inverted_camera_matrix, np.ndarray)
+
+    homogenous_point_image_space = np.zeros(3, dtype=float)
+    homogenous_point_image_space[:2] = image_point
+    homogenous_point_image_space[2] = 1
+
+    # define laser ray assuming pinhole camera
+    return inverted_camera_matrix @ homogenous_point_image_space
 
 
 def image_coordinate_to_projected_point_vec(
@@ -77,13 +81,11 @@ def compute_world_point(
 def compute_world_points(
     laser_origin: np.ndarray,
     laser_axis: np.ndarray,
-    camera_params: tuple,
+    inverted_camera_matrix: np.ndarray,
     image_coordinates: np.ndarray,
 ) -> np.ndarray:
     projected_points = image_coordinate_to_projected_point_vec(
-        image_points=image_coordinates,
-        pixel_pitch_mm=camera_params[3],
-        focal_length_mm=camera_params[0],
+        image_points=image_coordinates, inverted_camera_matrix=inverted_camera_matrix
     )
     final_laser_axes = (
         -1

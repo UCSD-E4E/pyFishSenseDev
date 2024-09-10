@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from pyfishsensedev.calibration import LensCalibration
+from pyfishsensedev.library.laser_parallax import image_coordinate_to_projected_point
 
 
 class PlaneDetector(ABC):
@@ -90,12 +91,9 @@ class PlaneDetector(ABC):
     def project_point_onto_plane_camera_space(
         self, point_image_space: np.ndarray, lens_calibration: LensCalibration
     ) -> np.ndarray | None:
-        homogenous_point_image_space = np.zeros(3, dtype=float)
-        homogenous_point_image_space[:2] = point_image_space
-        homogenous_point_image_space[2] = 1
-
-        # define laser ray assuming pinhole camera
-        ray = lens_calibration.inverted_camera_matrix @ homogenous_point_image_space
+        ray = image_coordinate_to_projected_point(
+            point_image_space, lens_calibration.inverted_camera_matrix
+        )
 
         camera_points = self.get_points_camera_space(lens_calibration)
         normal_vector = self.get_normal_vector_camera_space(lens_calibration)

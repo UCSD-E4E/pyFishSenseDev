@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterator, Self, Tuple
+from typing import Iterator, Tuple
 
 import numpy as np
 
@@ -59,16 +59,11 @@ class LaserCalibration:
         self,
         calibration_planes_and_dark_images: Iterator[Tuple[PlaneDetector, np.ndarray]],
         lens_calibration: LensCalibration,
-        laser_calibration_estimate: Self,
-        device: str,
+        laser_detector: LaserDetector,
     ) -> None:
         calibration_planes_and_dark_images = [
             (p, d) for p, d in calibration_planes_and_dark_images if p.is_valid()
         ]
-
-        laser_detector = LaserDetector(
-            lens_calibration, laser_calibration_estimate, device
-        )
 
         laser_points = [
             (p, laser_detector.find_laser(d))
@@ -76,7 +71,7 @@ class LaserCalibration:
         ]
 
         laser_points_3d = [
-            p.project_point_onto_plane_camera_space(l)
+            p.project_point_onto_plane_camera_space(l, lens_calibration)
             for p, l in laser_points
             if l is not None
         ]
