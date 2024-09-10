@@ -55,13 +55,11 @@ def compute_world_points_from_depths(
 def compute_world_point(
     laser_origin: np.ndarray,
     laser_axis: np.ndarray,
-    camera_params: tuple,
+    inverted_camera_matrix: np.ndarray,
     image_coordinate: np.ndarray,
 ) -> np.ndarray:
     projected_point = image_coordinate_to_projected_point(
-        image_point=image_coordinate,
-        pixel_pitch_mm=camera_params[3],
-        focal_length_mm=camera_params[0],
+        image_point=image_coordinate, inverted_camera_matrix=inverted_camera_matrix
     )
     final_laser_axis = -1 * projected_point / np.linalg.norm(projected_point)
 
