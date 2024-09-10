@@ -41,7 +41,7 @@ class LensCalibration:
         if self.camera_matrix is None:
             return None
 
-        return np.invert(self.camera_matrix)
+        return np.linalg.inv(self.camera_matrix)
 
     @property
     def distortion_coefficients(self) -> np.ndarray | None:
