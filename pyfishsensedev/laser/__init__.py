@@ -1,1 +1,0 @@
-from pyfishsensedev.laser.nn_laser_detector import NNLaserDetector

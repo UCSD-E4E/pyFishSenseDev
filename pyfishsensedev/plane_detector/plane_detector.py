@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-
 class PlaneDetector(ABC):
     def __init__(self, image: np.ndarray) -> None:
         self._image = image
