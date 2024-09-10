@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     from pyfishsensedev.image import ImageRectifier
     from pyfishsensedev.image.image_processors.raw_processor import RawProcessor
-    from pyfishsensedev.laser.laser_detector import LaserDetector
+    from pyfishsensedev.laser.nn_laser_detector import LaserDetector
     from pyfishsensedev.segmentation.fish import FishSegmentationFishialPyTorch
 
     raw_processor = RawProcessor()

@@ -1,1 +1,1 @@
-from pyfishsensedev.laser.laser_detector import LaserDetector
+from pyfishsensedev.laser.nn_laser_detector import NNLaserDetector
