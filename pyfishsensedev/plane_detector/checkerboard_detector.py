@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
 
-from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
+from pyfishsensedev.plane_detector.projectable_plane_detector import ProjectablePlaneDetector
 
 
-class CheckerboardDetector(PlaneDetector):
+class CheckerboardDetector(ProjectablePlaneDetector):
     def __init__(
         self, image: np.ndarray[np.uint8], rows: int, columns: int, square_size: float
     ) -> None:

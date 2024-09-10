@@ -10,7 +10,9 @@ from pyfishsensedev.library.array_read_write import (
     write_laser_calibration,
 )
 from pyfishsensedev.library.laser_parallax import atanasov_calibration_method
-from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
+from pyfishsensedev.plane_detector.projectable_plane_detector import (
+    ProjectablePlaneDetector,
+)
 
 
 class LaserCalibration:
@@ -57,7 +59,9 @@ class LaserCalibration:
 
     def plane_calibrate(
         self,
-        calibration_planes_and_dark_images: Iterator[Tuple[PlaneDetector, np.ndarray]],
+        calibration_planes_and_dark_images: Iterator[
+            Tuple[ProjectablePlaneDetector, np.ndarray]
+        ],
         lens_calibration: LensCalibration,
         laser_detector: LaserDetector,
     ) -> None:
