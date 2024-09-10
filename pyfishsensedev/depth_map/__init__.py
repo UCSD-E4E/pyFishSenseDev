@@ -1,1 +1,1 @@
-from pyfishsensedev.depth_map.laser_depth_map import LaserDetector
+from pyfishsensedev.depth_map.laser_depth_map import LaserDepthMap
