@@ -27,13 +27,11 @@ def image_coordinate_to_projected_point_vec(
 
 
 def compute_world_point_from_depth(
-    camera_params: tuple, image_coordinate: np.ndarray, depth: float
+    image_coordinate: np.ndarray, depth: float, inverted_camera_matrix: np.ndarray
 ) -> np.ndarray:
     # Assumes the depth is known, calculates world point based on image point
     projected_point = image_coordinate_to_projected_point(
-        image_point=image_coordinate,
-        pixel_pitch_mm=camera_params[3],
-        focal_length_mm=camera_params[0],
+        image_point=image_coordinate, inverted_camera_matrix=inverted_camera_matrix
     )
     v = -projected_point / np.linalg.norm(projected_point)
     return v * depth / v[2]

@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
+from pyfishsensedev.library.laser_parallax import compute_world_point_from_depth
+
 
 class DepthMap(ABC):
     def __init__(self) -> None:
@@ -11,3 +14,31 @@ class DepthMap(ABC):
     @abstractmethod
     def depth_map(self) -> np.ndarray:
         raise NotImplementedError
+
+    def _get_depth_coordinate(
+        self,
+        image_coordinate: np.ndarray,
+        image_width: int | float,
+        image_height: int | float,
+    ) -> np.ndarray:
+        depth_shape = np.array(self.depth_map.shape, dtype=float)
+        image_shape = np.array([image_height, image_width], dtype=float)
+
+        return image_coordinate / (image_shape * depth_shape)
+
+    def get_camera_space_point(
+        self,
+        image_coordinate: np.ndarray,
+        image_width: int | float,
+        image_height: int | float,
+        lens_calibration: LensCalibration,
+    ) -> np.ndarray:
+        depth_coordinate = self._get_depth_coordinate(
+            image_coordinate, image_width, image_height
+        )
+
+        depth = self.depth_map[depth_coordinate]
+
+        return compute_world_point_from_depth(
+            image_coordinate, depth, lens_calibration.inverted_camera_matrix
+        )
