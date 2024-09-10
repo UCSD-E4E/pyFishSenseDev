@@ -21,9 +21,15 @@ class LaserDepthMap(DepthMap):
 
     @property
     def depth_map(self) -> np.ndarray:
-        return compute_world_point(
-            self._laser_calibration.laser_position,
-            self._laser_calibration.laser_axis,
-            self._lens_calibration.inverted_camera_matrix,
-            self._laser_image_position,
+        return np.array(
+            [
+                [
+                    compute_world_point(
+                        self._laser_calibration.laser_position,
+                        self._laser_calibration.laser_axis,
+                        self._lens_calibration.inverted_camera_matrix,
+                        self._laser_image_position,
+                    )
+                ]
+            ]
         )
