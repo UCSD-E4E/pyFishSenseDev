@@ -34,8 +34,8 @@ def write_camera_calibration(
                 tarinfo.mtime = int(datetime.now().timestamp())
                 f.addfile(tarinfo, b)
 
-        write_numpy_array(calibration_matrix, "_calibration_matrix.npy")
-        write_numpy_array(distortion_coefficients, "_distortion_coefficients.npy")
+        write_numpy_array(calibration_matrix, "_calibration_matrix.npy", f)
+        write_numpy_array(distortion_coefficients, "_distortion_coefficients.npy", f)
 
 
 def write_laser_calibration(
