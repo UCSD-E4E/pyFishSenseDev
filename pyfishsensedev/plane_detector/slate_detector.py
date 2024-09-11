@@ -1,8 +1,6 @@
-from pyfishsensedev.plane_detector.projectable_plane_detector import (
-    ProjectablePlaneDetector,
-)
+from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
-class SlateDetector(ProjectablePlaneDetector):
+class SlateDetector(PlaneDetector):
     def __init__(self) -> None:
         super().__init__()
