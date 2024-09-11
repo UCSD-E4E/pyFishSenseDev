@@ -8,7 +8,6 @@ from pyfishsensedev.library.array_read_write import (
     read_camera_calibration,
     write_camera_calibration,
 )
-from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
 class LensCalibration:
@@ -65,17 +64,21 @@ class LensCalibration:
         )
 
     def plane_calibrate(
-        self, calibration_planes: Iterator[PlaneDetector], max_error=None
+        self,
+        body_space_points: Iterator[np.ndarray],
+        image_space_points: Iterator[np.ndarray],
+        image_width: int,
+        image_height: int,
+        max_error=None,
     ) -> float:
-        calibration_planes = [p for p in calibration_planes if p.is_valid()]
-
-        height, width = calibration_planes[0].width, calibration_planes[0].height
-
-        body_space = [p.points_body_space for p in calibration_planes]
-        image_space = [p.points_image_space for p in calibration_planes]
-
         error, self._camera_matrix, self._distortion_coefficients, _, _ = (
-            cv2.calibrateCamera(body_space, image_space, (width, height), None, None)
+            cv2.calibrateCamera(
+                body_space_points,
+                image_space_points,
+                (image_width, image_height),
+                None,
+                None,
+            )
         )
 
         if max_error is not None and error > max_error:
