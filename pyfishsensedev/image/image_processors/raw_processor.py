@@ -30,7 +30,7 @@ class RawProcessor(ImageProcessor):
         return img
 
     def _demosaic(self, img: np.ndarray) -> np.ndarray:
-        return cv2.demosaicing(img, cv2.COLOR_BayerGB2BGR)
+        return cv2.demosaicing(cv2.UMat(img), cv2.COLOR_BayerGB2BGR).get()
 
     def _linearization(self, img: np.ndarray) -> np.ndarray:
         img[img > 65000] = img.min()
