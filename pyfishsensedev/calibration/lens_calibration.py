@@ -71,8 +71,8 @@ class LensCalibration:
 
         height, width = calibration_planes[0].width, calibration_planes[0].height
 
-        body_space = [p.get_points_body_space() for p in calibration_planes]
-        image_space = [p.get_points_image_space() for p in calibration_planes]
+        body_space = [p.points_body_space for p in calibration_planes]
+        image_space = [p.points_image_space for p in calibration_planes]
 
         error, self._camera_matrix, self._distortion_coefficients, _, _ = (
             cv2.calibrateCamera(body_space, image_space, (width, height), None, None)

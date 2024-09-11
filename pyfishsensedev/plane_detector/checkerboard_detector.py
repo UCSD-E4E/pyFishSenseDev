@@ -16,7 +16,7 @@ class CheckerboardDetector(PlaneDetector):
 
     def _get_points_image_space(self):
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-        gray = cv2.cvtColor(self.image, cv2.COLOR_RGB2GRAY)
+        gray = cv2.cvtColor(cv2.UMat(self.image), cv2.COLOR_RGB2GRAY)
 
         # find the checkerboard
         ret, corners = cv2.findChessboardCorners(
