@@ -30,7 +30,7 @@ class CheckerboardDetector(PlaneDetector):
             # opencv can attempt to improve the checkerboard coordinates
             corners = cv2.cornerSubPix(gray, corners, conv_size, (-1, -1), criteria)
 
-            return corners
+            return corners.get()
         else:
             return None
 
