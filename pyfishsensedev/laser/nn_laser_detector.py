@@ -56,7 +56,9 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
         self.laser_calibration = laser_calibration
         self.model = LaserDetectorNetwork()
         self.model.load_state_dict(
-            torch.load(model_weights_path.as_posix(), map_location=device)
+            torch.load(
+                model_weights_path.as_posix(), map_location=device, weights_only=True
+            )
         )
 
         self.model.to(device)
