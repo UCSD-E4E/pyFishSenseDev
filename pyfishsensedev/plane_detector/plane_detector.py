@@ -115,7 +115,9 @@ class PlaneDetector(ABC):
         )
 
         camera_points = self.get_points_camera_space(camera_matrix)
-        normal_vector = self.get_normal_vector_camera_space(camera_matrix)
+        normal_vector = self.get_normal_vector_camera_space(
+            camera_matrix
+        ) / np.linalg.norm(normal_vector)
 
         if camera_points is None or normal_vector is None:
             return None
