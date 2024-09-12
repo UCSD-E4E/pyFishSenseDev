@@ -63,12 +63,12 @@ class PlaneDetector(ABC):
 
         rotation, _ = cv2.Rodrigues(rotation_vectors)
 
-        translation = np.zeros((4, 4), dtype=float)
-        translation[0:3, 0:3] = rotation
-        translation[3, 0:3] = translation
-        translation[3, 3] = 1
+        transformation = np.zeros((4, 4), dtype=float)
+        transformation[0:3, 0:3] = rotation
+        transformation[3, 0:3] = translation
+        transformation[3, 3] = 1
 
-        return translation
+        return transformation
 
     def get_points_camera_space(
         self,
