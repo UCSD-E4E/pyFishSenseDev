@@ -81,7 +81,7 @@ class PlaneDetector(ABC):
             return None
 
         point_count, _ = body_points.shape
-        homogeneous_body_points = np.zeros((point_count, 4), dtypes=float)
+        homogeneous_body_points = np.zeros((point_count, 4), dtype=float)
         homogeneous_body_points[:, :3] = body_points
 
         homogeneous_camera_points = transformation @ homogeneous_body_points
