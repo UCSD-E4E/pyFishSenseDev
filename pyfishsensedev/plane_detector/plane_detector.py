@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
+import cv2
 import numpy as np
+
+from pyfishsensedev.library.laser_parallax import image_coordinate_to_projected_point
 
 
 class PlaneDetector(ABC):
@@ -44,10 +47,79 @@ class PlaneDetector(ABC):
 
         return self._points_body_space
 
-    def detect(self):
-        # Force the points to be cached.
-        _ = self.points_image_space
-        _ = self.points_image_space
+    def get_body_to_camera_space_transform(
+        self, camera_matrix: np.ndarray
+    ) -> np.ndarray | None:
+        empty_dist_coeffs = np.zeros((5,))
+        ret, rotation_vectors, translation = cv2.solvePnP(
+            self.points_body_space,
+            self.points_image_space,
+            camera_matrix,
+            empty_dist_coeffs,
+        )
+
+        if not ret:
+            return None
+
+        rotation, _ = cv2.Rodrigues(rotation_vectors)
+
+        translation = np.zeros((4, 4), dtype=float)
+        translation[0:3, 0:3] = rotation
+        translation[3, 0:3] = translation
+        translation[3, 3] = 1
+
+        return translation
+
+    def get_points_camera_space(
+        self,
+        camera_matrix: np.ndarray,
+    ) -> np.ndarray | None:
+        transformation = self.get_body_to_camera_space_transform(camera_matrix)
+        body_points = self.points_body_space
+
+        if transformation is None or body_points is None:
+            return None
+
+        point_count, _ = body_points.shape
+        homogeneous_body_points = np.zeros((point_count, 4), dtypes=float)
+        homogeneous_body_points[:, :3] = body_points
+
+        homogeneous_camera_points = transformation @ homogeneous_body_points
+        return homogeneous_camera_points[:, :3]
+
+    def get_normal_vector_camera_space(
+        self,
+        camera_matrix: np.ndarray,
+    ) -> np.ndarray | None:
+        camera_points = self.get_points_camera_space(camera_matrix)
+
+        if camera_points is None:
+            return camera_points
+
+        return np.cross(
+            camera_points[1, :] - camera_points[0, :],
+            camera_points[2, :] - camera_points[0, :],
+        )
+
+    def project_point_onto_plane_camera_space(
+        self,
+        point_image_space: np.ndarray,
+        camera_matrix: np.ndarray,
+        inverted_camera_matrix: np.ndarray,
+    ) -> np.ndarray | None:
+        ray = image_coordinate_to_projected_point(
+            point_image_space, inverted_camera_matrix
+        )
+
+        camera_points = self.get_points_camera_space(camera_matrix)
+        normal_vector = self.get_normal_vector_camera_space(camera_matrix)
+
+        if camera_points is None or normal_vector is None:
+            return None
+
+        # find scale factor such that the laser ray intersects with the plane
+        scale_factor = (normal_vector.T @ camera_points[0, :]) / (normal_vector.T @ ray)
+        return normal_vector * scale_factor
 
     def is_valid(self) -> bool:
         return (
