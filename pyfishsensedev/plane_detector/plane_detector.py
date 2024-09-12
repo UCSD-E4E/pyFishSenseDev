@@ -64,8 +64,8 @@ class PlaneDetector(ABC):
         rotation, _ = cv2.Rodrigues(rotation_vectors)
 
         transformation = np.zeros((4, 4), dtype=float)
-        transformation[0:3, 0:3] = rotation
-        transformation[3, 0:3] = translation
+        transformation[:3, :3] = rotation
+        transformation[:3, 3] = translation.flatten()
         transformation[3, 3] = 1
 
         return transformation
