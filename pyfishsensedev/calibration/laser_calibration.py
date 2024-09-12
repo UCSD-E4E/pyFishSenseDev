@@ -61,4 +61,4 @@ class LaserCalibration:
         self._laser_axis = laser_params[:3]
 
         self._laser_position = np.zeros(3, dtype=float)
-        self._laser_position[:2] = laser_params[:-2]
+        self._laser_position[:2] = laser_params[-2:]
