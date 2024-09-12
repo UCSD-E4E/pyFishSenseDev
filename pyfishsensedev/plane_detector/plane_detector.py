@@ -83,8 +83,11 @@ class PlaneDetector(ABC):
         point_count, _ = body_points.shape
         homogeneous_body_points = np.zeros((point_count, 4), dtype=float)
         homogeneous_body_points[:, :3] = body_points
+        homogeneous_body_points[:, 3] = 1
 
-        homogeneous_camera_points = transformation @ homogeneous_body_points
+        homogeneous_camera_points = np.einsum(
+            "ij,kj->ki", transformation, homogeneous_body_points
+        )
         return homogeneous_camera_points[:, :3]
 
     def get_normal_vector_camera_space(
