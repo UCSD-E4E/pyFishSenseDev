@@ -180,6 +180,7 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
 
         mask = np.zeros_like(red)
         mask[np.logical_and(245 <= red, laser_mask == 255)] = 255
+        mask = cv2.UMat(mask)
 
         contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         c = max(contours, key=cv2.contourArea)
