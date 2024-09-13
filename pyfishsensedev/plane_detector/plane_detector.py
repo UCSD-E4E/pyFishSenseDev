@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -47,9 +48,9 @@ class PlaneDetector(ABC):
 
         return self._points_body_space
 
-    def get_body_to_camera_space_transform(
+    def _get_body_to_camera_space_transform(
         self, camera_matrix: np.ndarray
-    ) -> np.ndarray | None:
+    ) -> Tuple[np.ndarray | None, np.ndarray | None]:
         empty_dist_coeffs = np.zeros((5,))
         ret, rotation_vectors, translation = cv2.solvePnP(
             self.points_body_space,
@@ -59,42 +60,29 @@ class PlaneDetector(ABC):
         )
 
         if not ret:
-            return None
+            return None, None
 
         rotation, _ = cv2.Rodrigues(rotation_vectors)
+        return rotation, translation
 
-        transformation = np.zeros((4, 4), dtype=float)
-        transformation[:3, :3] = rotation
-        transformation[:3, 3] = translation.flatten()
-        transformation[3, 3] = 1
-
-        return transformation
-
-    def get_points_camera_space(
+    def _get_points_camera_space(
         self,
         camera_matrix: np.ndarray,
     ) -> np.ndarray | None:
-        transformation = self.get_body_to_camera_space_transform(camera_matrix)
+        rotation, translation = self._get_body_to_camera_space_transform(camera_matrix)
         body_points = self.points_body_space
 
-        if transformation is None or body_points is None:
+        if rotation is None or translation is None or body_points is None:
             return None
 
-        point_count, _ = body_points.shape
-        homogeneous_body_points = np.zeros((point_count, 4), dtype=float)
-        homogeneous_body_points[:, :3] = body_points
-        homogeneous_body_points[:, 3] = 1
+        board_plane_points = (rotation @ body_points[[0, 1, 14]].T + translation).T
+        return board_plane_points
 
-        homogeneous_camera_points = np.einsum(
-            "ij,kj->ki", transformation, homogeneous_body_points
-        )
-        return homogeneous_camera_points[:, :3]
-
-    def get_normal_vector_camera_space(
+    def _get_normal_vector_camera_space(
         self,
         camera_matrix: np.ndarray,
     ) -> np.ndarray | None:
-        camera_points = self.get_points_camera_space(camera_matrix)
+        camera_points = self._get_points_camera_space(camera_matrix)
 
         if camera_points is None:
             return camera_points
@@ -114,9 +102,8 @@ class PlaneDetector(ABC):
             point_image_space, inverted_camera_matrix
         )
 
-        camera_points = self.get_points_camera_space(camera_matrix)
-        normal_vector = self.get_normal_vector_camera_space(camera_matrix)
-        normal_vector /= np.linalg.norm(normal_vector)
+        camera_points = self._get_points_camera_space(camera_matrix)
+        normal_vector = self._get_normal_vector_camera_space(camera_matrix)
 
         if camera_points is None or normal_vector is None:
             return None
