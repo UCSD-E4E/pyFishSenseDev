@@ -113,7 +113,7 @@ class PlaneDetector(ABC):
 
         # find scale factor such that the laser ray intersects with the plane
         scale_factor = (normal_vector.T @ camera_points[0, :]) / (normal_vector.T @ ray)
-        return normal_vector * scale_factor
+        return ray * scale_factor
 
     def is_valid(self) -> bool:
         return (
