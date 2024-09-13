@@ -98,8 +98,11 @@ class PlaneDetector(ABC):
         camera_matrix: np.ndarray,
         inverted_camera_matrix: np.ndarray,
     ) -> np.ndarray | None:
-        ray = image_coordinate_to_projected_point(
-            point_image_space, inverted_camera_matrix
+        ray = (
+            image_coordinate_to_projected_point(
+                point_image_space, inverted_camera_matrix
+            )
+            * -1
         )
 
         camera_points = self._get_points_camera_space(camera_matrix)
