@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 
 
@@ -13,7 +12,7 @@ def image_coordinate_to_projected_point(
     homogenous_point_image_space[2] = 1
 
     # define laser ray assuming pinhole camera
-    return cv2.transform(homogenous_point_image_space, inverted_camera_matrix)
+    return inverted_camera_matrix @ homogenous_point_image_space
 
 
 def image_coordinate_to_projected_point_vec(
