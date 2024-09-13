@@ -184,10 +184,11 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
         contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         c = max(contours, key=cv2.contourArea)
 
+        M = cv2.moments(c)
+
         if M["m00"] == 0:
             return None
 
-        M = cv2.moments(c)
         cX = float(M["m10"] / M["m00"])
         cY = float(M["m01"] / M["m00"])
 
