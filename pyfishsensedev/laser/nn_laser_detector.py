@@ -242,9 +242,13 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
                 final_coord = coord
                 min_distance = distance
 
-        return self._correct_laser_dot(
-            np.array([final_coord[1], final_coord[0]]), img
-        )  # was previously y, x
+        uncorrected = np.array([final_coord[1], final_coord[0]])
+        corrected = self._correct_laser_dot(uncorrected, img)  # was previously y, x
+
+        if corrected is None:
+            return uncorrected
+
+        return corrected
 
 
 if __name__ == "__main__":
