@@ -171,6 +171,25 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
 
         return img_tiles, coordinates
 
+    def _correct_laser_dot(self, coord: np.ndarray, img: np.ndarray) -> np.ndarray:
+        red = img[:, :, 2]
+        x, y = coord
+
+        laser_mask = np.zeros_like(red)
+        laser_mask[y - 43 : y + 43, x - 43 : x + 43] = 255
+
+        mask = np.zeros_like(red)
+        mask[np.logical_and(245 <= red, laser_mask == 255)] = 255
+
+        contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        c = max(contours, key=cv2.contourArea)
+
+        M = cv2.moments(c)
+        cX = float(M["m10"] / M["m00"])
+        cY = float(M["m01"] / M["m00"])
+
+        return np.array([cX, cY])
+
     def find_laser(self, img: np.ndarray) -> np.ndarray | None:
         masked_img, _ = self._get_masked_image_matrix(img)
 
@@ -218,7 +237,9 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
                 final_coord = coord
                 min_distance = distance
 
-        return np.array([final_coord[1], final_coord[0]])  # was previously y, x
+        return self._correct_laser_dot(
+            np.array([final_coord[1], final_coord[0]]), img
+        )  # was previously y, x
 
 
 if __name__ == "__main__":
