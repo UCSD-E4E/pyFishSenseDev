@@ -125,6 +125,46 @@ def atanasov_calibration_method(ps: np.ndarray):
     return params
 
 
+def get_jacobian(ps: np.ndarray, state: np.ndarray) -> np.ndarray:
+    n = ps.shape[0]
+    jacobian = np.zeros((n * 3, 5))
+    alpha = state[:3]
+    l = np.array([state[3], state[4], 0])
+    for i in range(n):
+        p = ps[i]
+        jacobian[3 * i : 3 * i + 3, :3] = np.eye(3) * np.linalg.norm(p - l)
+        jacobian[3 * i : 3 * i + 3, 3:5] = (
+            alpha[:, np.newaxis] @ (p - l)[np.newaxis, :2]
+        ) / np.linalg.norm(p - l)
+        jacobian[[3 * i, 3 * i + 1], [3, 4]] *= -1
+        jacobian[[3 * i, 3 * i + 1], [3, 4]] += 1
+    return jacobian
+
+
+def get_residual(points: np.ndarray, state: np.ndarray) -> float:
+    laser_pos = np.array([state[3], state[4], 0])
+    laser_angle = state[:3]
+    est_points = (
+        np.linalg.norm(points - laser_pos, axis=1)[:, np.newaxis] * laser_angle
+        + laser_pos
+    )
+    return points - est_points
+
+
+def gauss_newton_estimate_state(
+    ps: np.ndarray, init_state: np.ndarray, num_iterations: int = 10
+) -> np.ndarray:
+    state = init_state
+    residual_norm_squared = []
+    for _ in range(num_iterations):
+        J = get_jacobian(ps, state)
+        rs = get_residual(ps, state).flatten()
+        residual_norm_squared.append(np.dot(rs, rs))
+        temp_state = state + np.linalg.pinv(J) @ rs
+        state = temp_state
+    return state, residual_norm_squared
+
+
 def test_run():
     sensor_size_px = np.array([4000, 3000])
     pixel_pitch_mm = 0.0015

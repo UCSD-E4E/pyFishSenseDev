@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Self
 
 import numpy as np
 
@@ -7,7 +7,7 @@ from pyfishsensedev.library.array_read_write import (
     read_laser_calibration,
     write_laser_calibration,
 )
-from pyfishsensedev.library.laser_parallax import atanasov_calibration_method
+from pyfishsensedev.library.laser_parallax import gauss_newton_estimate_state
 
 
 class LaserCalibration:
@@ -53,10 +53,15 @@ class LaserCalibration:
         )
 
     def plane_calibrate(
-        self,
-        laser_points_3d: Iterator[np.ndarray],
+        self, laser_points_3d: Iterator[np.ndarray], estimate_laser_calibration: Self
     ) -> None:
-        laser_params = atanasov_calibration_method(laser_points_3d)
+        # laser_params = atanasov_calibration_method(laser_points_3d)
+
+        state_init = np.zeros(5, dtype=float)
+        state_init[:3] = estimate_laser_calibration.laser_axis
+        state_init[-2:] = estimate_laser_calibration.laser_position[:2]
+
+        laser_params, _ = gauss_newton_estimate_state(laser_points_3d, state_init)
 
         self._laser_axis = laser_params[:3]
 
