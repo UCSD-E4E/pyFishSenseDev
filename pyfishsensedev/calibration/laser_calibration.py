@@ -7,7 +7,10 @@ from pyfishsensedev.library.array_read_write import (
     read_laser_calibration,
     write_laser_calibration,
 )
-from pyfishsensedev.library.laser_parallax import gauss_newton_estimate_state
+from pyfishsensedev.library.laser_parallax import (
+    atanasov_calibration_method,
+    gauss_newton_estimate_state,
+)
 
 
 class LaserCalibration:
@@ -53,15 +56,19 @@ class LaserCalibration:
         )
 
     def plane_calibrate(
-        self, laser_points_3d: Iterator[np.ndarray], estimate_laser_calibration: Self
+        self,
+        laser_points_3d: Iterator[np.ndarray],
+        estimate_laser_calibration: Self,
+        use_gauss_newton=True,
     ) -> None:
-        # laser_params = atanasov_calibration_method(laser_points_3d)
+        if use_gauss_newton:
+            state_init = np.zeros(5, dtype=float)
+            state_init[:3] = estimate_laser_calibration.laser_axis
+            state_init[-2:] = estimate_laser_calibration.laser_position[:2]
 
-        state_init = np.zeros(5, dtype=float)
-        state_init[:3] = estimate_laser_calibration.laser_axis
-        state_init[-2:] = estimate_laser_calibration.laser_position[:2]
-
-        laser_params, _ = gauss_newton_estimate_state(laser_points_3d, state_init)
+            laser_params, _ = gauss_newton_estimate_state(laser_points_3d, state_init)
+        else:
+            laser_params = atanasov_calibration_method(laser_points_3d)
 
         self._laser_axis = laser_params[:3]
 
