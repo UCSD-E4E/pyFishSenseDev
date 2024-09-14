@@ -12,10 +12,10 @@ class ImageRectifier:
 
     def rectify(self, img: np.ndarray) -> np.ndarray:
         return cv2.undistort(
-            img,
+            cv2.UMat(img),
             self._lens_calibration.camera_matrix,
             self._lens_calibration.distortion_coefficients,
-        )
+        ).get()
 
 
 if __name__ == "__main__":
