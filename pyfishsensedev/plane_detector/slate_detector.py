@@ -24,7 +24,7 @@ class SlateDetector(PlaneDetector):
             numpy_image_to_torch(self.image)
         )
 
-        print("Done")
+        print(f"{feats0_matches.size()}, {feats1_matches.size()}")
 
     def _get_points_image_space(self):
         pass
