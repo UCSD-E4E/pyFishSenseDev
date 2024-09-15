@@ -41,7 +41,8 @@ class SlateDetector(PlaneDetector):
                 max_feats0_matches = feats0_matches
                 max_feats1_matches = feats1_matches
 
-        print(f"{max_feats0_matches.size()}, {max_feats1_matches.size()}")
+        if max_feats0_matches is not None:
+            print(f"{max_feats0_matches.size()}, {max_feats1_matches.size()}")
 
     def _get_points_image_space(self):
         pass

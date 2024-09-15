@@ -502,8 +502,8 @@ class LightGlue(nn.Module):
 
         # print(f"desc0.shape = {desc0.shape}")
         # print(f"self.conf.input_dim = {self.conf.input_dim}")
-        print(f"len(desc0[0]) = {len(desc0[0])}")
-        print(f"len(desc1[0]) = {len(desc1[0])}")
+        # print(f"len(desc0[0]) = {len(desc0[0])}")
+        # print(f"len(desc1[0]) = {len(desc1[0])}")
         assert desc0.shape[-1] == self.conf.input_dim
         assert desc1.shape[-1] == self.conf.input_dim
 
