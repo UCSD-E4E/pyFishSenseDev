@@ -33,5 +33,5 @@ class Pdf:
 
         return height
 
-    def get_points_body_space(self, points: np.ndarray) -> np.ndarray:
+    def get_physical_measurements(self, points: np.ndarray) -> np.ndarray:
         return (points / float(Pdf.DPI)) * INCH_TO_M

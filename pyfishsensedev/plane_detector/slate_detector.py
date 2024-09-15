@@ -58,7 +58,13 @@ class SlateDetector(PlaneDetector):
     def _get_points_body_space(self):
         template_matches, _ = self._get_template_matches()
 
-        return self._pdf.get_points_body_space(template_matches.cpu().numpy())
+        num_points, _ = template_matches.shape
+        objp = np.zeros((num_points, 3), np.float32)
+        objp[:, :2] = self._pdf.get_physical_measurements(
+            template_matches.cpu().numpy()
+        )
+
+        return objp
 
     def is_valid(self):
         template_matches, _ = self._get_template_matches()
