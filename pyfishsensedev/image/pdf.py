@@ -3,6 +3,8 @@ from pathlib import Path
 import numpy as np
 import pymupdf
 
+from pyfishsensedev.library.constants import INCH_TO_M
+
 
 class Pdf:
     DPI = 300
@@ -18,3 +20,18 @@ class Pdf:
     @property
     def image(self) -> np.ndarray:
         return self._image
+
+    @property
+    def width(self) -> int:
+        _, width = self._image.shape
+
+        return width
+
+    @property
+    def height(self) -> int:
+        height, _ = self._image.shape
+
+        return height
+
+    def get_points_body_space(self, points: np.ndarray) -> np.ndarray:
+        return (points / float(Pdf.DPI)) * INCH_TO_M

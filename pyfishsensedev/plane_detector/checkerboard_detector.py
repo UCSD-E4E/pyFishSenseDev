@@ -14,7 +14,7 @@ class CheckerboardDetector(PlaneDetector):
         self._columns = columns
         self._square_size = square_size
 
-    def _get_points_image_space(self):
+    def _get_points_image_space(self) -> np.ndarray:
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         gray = cv2.cvtColor(cv2.UMat(self.image), cv2.COLOR_RGB2GRAY)
 
@@ -34,7 +34,7 @@ class CheckerboardDetector(PlaneDetector):
         else:
             return None
 
-    def _get_points_body_space(self):
+    def _get_points_body_space(self) -> np.ndarray:
         # coordinates of squares in the checkerboard world space
         objp = np.zeros((self._rows * self._columns, 3), np.float32)
         objp[:, :2] = np.mgrid[0 : self._rows, 0 : self._columns].T.reshape(-1, 2)

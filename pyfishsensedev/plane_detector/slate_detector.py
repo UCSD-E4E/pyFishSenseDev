@@ -16,8 +16,8 @@ class SlateDetector(PlaneDetector):
         self._pdf = pdf
         self._tensor_template = numpy_image_to_torch(self._pdf.image)
         self._ran_template_matches = False
-        self._feats0_matches = None
-        self._feats1_matches = None
+        self._template_matches = None
+        self._image_matches = None
 
     def _get_template_matches(self) -> Tuple[torch.Tensor, torch.Tensor]:
         if not self._ran_template_matches:
@@ -35,33 +35,37 @@ class SlateDetector(PlaneDetector):
                     },
                 )
 
-                feats0_matches, feats1_matches = image_matcher(
+                template_matches, image_matches = image_matcher(
                     numpy_image_to_torch(self.image)
                 )
 
-                num_keypoints, _ = feats0_matches.shape
+                num_keypoints, _ = template_matches.shape
                 if num_keypoints > max_num_keypoints:
                     max_num_keypoints = num_keypoints
 
-                    self._feats0_matches = feats0_matches
-                    self._feats1_matches = feats1_matches
+                    self._template_matches = template_matches
+                    self._image_matches = image_matches
 
             self._ran_template_matches = True
 
-        return self._feats0_matches, self._feats1_matches
+        return self._template_matches, self._image_matches
 
     def _get_points_image_space(self):
-        pass
+        _, image_matches = self._get_template_matches()
+
+        return image_matches.cpu().numpy()
 
     def _get_points_body_space(self):
-        pass
+        template_matches, _ = self._get_template_matches()
+
+        return self._pdf.get_points_body_space(template_matches.cpu().numpy())
 
     def is_valid(self):
-        feats0_matches, _ = self._get_template_matches()
+        template_matches, _ = self._get_template_matches()
 
-        if feats0_matches is None:
+        if template_matches is None:
             return None
 
-        num_matches, _ = feats0_matches.shape
+        num_matches, _ = template_matches.shape
 
         return num_matches > 10
