@@ -67,8 +67,8 @@ class ImageMatcher:
             matcher = LightGlue(**self.matcher_conf).eval().to(device)
 
             # Extract features
-            if not self.com_license:
-                print("    WARNING: USING THE NON-COMMERCIAL VERSION OF SUPERPOINT!")
+            # if not self.com_license:
+            #     print("    WARNING: USING THE NON-COMMERCIAL VERSION OF SUPERPOINT!")
             if (
                 self.feats0 == None
             ):  # so we don't have to extract template keypoints every time
