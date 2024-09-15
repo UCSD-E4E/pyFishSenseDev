@@ -6,6 +6,7 @@
    Authors: Rémi Pautrat, Paul-Edouard Sarlin
 """
 from collections import OrderedDict
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -14,6 +15,7 @@ import torch.nn as nn
 from kornia.color import rgb_to_grayscale
 
 from pyfishsensedev.library.homography.utils import Extractor
+from pyfishsensedev.library.online_ml_model import OnlineMLModel
 
 
 def sample_descriptors(keypoints, descriptors, s: int = 8):
@@ -74,7 +76,7 @@ class VGGBlock(nn.Sequential):
         )
 
 
-class SuperPoint(Extractor):
+class SuperPoint(Extractor, OnlineMLModel):
     default_conf = {
         "nms_radius": 4,
         "max_num_keypoints": None,
@@ -112,8 +114,16 @@ class SuperPoint(Extractor):
         )
 
         # Load weights
-        weights_path = "weights/superpoint_v6_from_tf.pth"
+        weights_path = self.download_model()
         self.load_state_dict(torch.load(weights_path))
+
+    @property
+    def _model_path(self) -> Path:
+        return self._model_cache_path / "superpoint_v6_from_tf.pth"
+
+    @property
+    def _model_url(self) -> str:
+        return "https://github.com/rpautrat/SuperPoint/raw/master/weights/superpoint_v6_from_tf.pth"
 
     def forward(self, data):
         image = data["image"]
