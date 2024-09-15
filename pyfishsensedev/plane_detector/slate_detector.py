@@ -43,12 +43,12 @@ class SlateDetector(PlaneDetector):
                 if num_keypoints > max_num_keypoints:
                     max_num_keypoints = num_keypoints
 
-                    self._max_feats0_matches = feats0_matches
-                    self._max_feats1_matches = feats1_matches
+                    self._feats0_matches = feats0_matches
+                    self._feats1_matches = feats1_matches
 
             self._ran_template_matches = True
 
-        return self._max_feats0_matches, self._feats1_matches
+        return self._feats0_matches, self._feats1_matches
 
     def _get_points_image_space(self):
         pass
@@ -58,6 +58,9 @@ class SlateDetector(PlaneDetector):
 
     def is_valid(self):
         feats0_matches, _ = self._get_template_matches()
+
+        if feats0_matches is None:
+            return None
 
         num_matches, _ = feats0_matches.shape
 
