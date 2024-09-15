@@ -4,6 +4,8 @@ Usage: Look at examples from example_inference.ipynb and process_data.py
 Due to licensing issues, make sure you are using the correct version of SuperPoint.
 """
 
+from typing import Tuple
+
 import torch
 
 from pyfishsensedev.library.homography.models.lightglue import LightGlue
@@ -29,7 +31,7 @@ class ImageMatcher:
             processing_conf["extractor"] if "extractor" in processing_conf else {}
         )
 
-    def __call__(self, image1: torch.Tensor):
+    def __call__(self, image1: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Given a calibration image, return its matches with the template.
         Input:
             image1: torch.Tensor
