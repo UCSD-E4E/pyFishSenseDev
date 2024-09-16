@@ -198,8 +198,8 @@ class NNLaserDetector(LaserDetector, OnlineMLModel):
 
         return np.array([cX, cY])
 
-    def find_laser(self, img: np.ndarray) -> np.ndarray | None:
-        masked_img, _ = self._get_masked_image_matrix(img)
+    def find_laser(self, img: np.ndarray, thickness=75) -> np.ndarray | None:
+        masked_img, _ = self._get_masked_image_matrix(img, thickness=thickness)
 
         if masked_img is None:
             return None
