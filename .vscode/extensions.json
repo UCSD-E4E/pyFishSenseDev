@@ -9,6 +9,7 @@
         "VisualStudioExptTeam.vscodeintellicode",
         "ms-python.black-formatter",
         "github.vscode-github-actions",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "ms-azuretools.vscode-docker"
     ]
 }
