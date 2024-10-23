@@ -22,7 +22,7 @@ pymupdf = "^1.24.10"
 
 [tool.poetry.group.dev.dependencies]
 matplotlib = "^3.9.2"
-onnx = "^1.16.2"
+onnx = "^1.17.0"
 onnxoptimizer = "^0.3.13"
 pytest = "^8.3.2"
 nas-unzip = {git = "https://github.com/UCSD-E4E/synology-download.git"}
