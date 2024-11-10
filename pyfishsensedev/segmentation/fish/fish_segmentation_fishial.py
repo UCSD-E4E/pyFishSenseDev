@@ -7,7 +7,6 @@ import numpy as np
 from PIL import Image
 from requests import get
 
-from pyfishsensedev import __version__
 from pyfishsensedev.library.online_ml_model import OnlineMLModel
 from pyfishsensedev.segmentation.segmentation import Segmentation
 

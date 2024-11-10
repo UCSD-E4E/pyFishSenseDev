@@ -1,8 +1,8 @@
+import importlib
+import importlib.metadata
 from pathlib import Path
 
 from appdirs import user_cache_dir
-
-from pyfishsensedev import __version__
 
 
 def _get_cache_directory() -> Path:
@@ -10,7 +10,7 @@ def _get_cache_directory() -> Path:
         user_cache_dir(
             appname="pyFishSenseDev",
             appauthor="Engineers for Exploration",
-            version=__version__,
+            version=importlib.metadata.version("pyfishsensedev"),
         )
     )
 
