@@ -42,6 +42,10 @@ class LaserDetectorNetwork(nn.Module):
 
 
 class NNLaserDetector(LaserDetector, OnlineMLModel):
+    @property
+    def name(self) -> str:
+        return "NNLaserDetector"
+
     def __init__(
         self,
         lens_calibration: LensCalibration,

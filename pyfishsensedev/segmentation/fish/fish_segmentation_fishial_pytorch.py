@@ -12,6 +12,10 @@ from pyfishsensedev.segmentation.fish.fish_segmentation_fishial import (
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
 class FishSegmentationFishialPyTorch(FishSegmentationFishial):
+    @property
+    def name(self) -> str:
+        return "Fishial_PyTorch"
+
     def __init__(self, device: str):
         super().__init__()
         self.device = device

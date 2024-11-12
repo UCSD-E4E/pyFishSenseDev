@@ -9,6 +9,10 @@ from pyfishsensedev.segmentation.fish.fish_segmentation_fishial import FishSegme
 
 # Adapted from https://github.com/fishial/fish-identification/blob/main/module/segmentation_package/interpreter_segm.py
 class FishSegmentationFishialOnnx(FishSegmentationFishial):
+    @property
+    def name(self) -> str:
+        return "Fishial_Onnx"
+    
     def __init__(self) -> None:
         super().__init__()
 

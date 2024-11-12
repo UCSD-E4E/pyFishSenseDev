@@ -23,16 +23,6 @@ class FishSegmentationFishial(Segmentation, OnlineMLModel, ABC):
     def unwarp_tensor(self, tensor: Iterable) -> Tuple:
         raise NotImplementedError
 
-    def _download_file(self, url: str, path: Path) -> Path:
-        if not path.exists():
-            path.parent.mkdir(parents=True, exist_ok=True)
-
-            response = get(url)
-            with path.open("wb") as file:
-                file.write(response.content)
-
-        return path.absolute()
-
     def _resize_img(
         self, img: np.ndarray, interp_method=Image.LANCZOS
     ) -> Tuple[np.ndarray, np.ndarray]:
