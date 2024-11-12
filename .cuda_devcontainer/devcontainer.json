@@ -1,0 +1,28 @@
+{
+	"image": "ghcr.io/ucsd-e4e/fishsense-lite:cuda",
+	"runArgs": [
+		"--gpus=all",
+		"--runtime=nvidia",
+		"-e", "NVIDIA_DRIVER_CAPABILITIES=all"
+	],
+	"postCreateCommand": "pip install poetry && poetry install --with dev",
+	"mounts": [
+		"source=${localEnv:HOME}/mnt,target=/home/ubuntu/mnt,type=bind"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.vscode-pylance",
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"njpwerner.autodocstring",
+				"ms-python.isort",
+				"eamodio.gitlens",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"github.vscode-github-actions",
+				"ms-python.black-formatter",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+}
