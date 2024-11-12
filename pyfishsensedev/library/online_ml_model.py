@@ -6,15 +6,19 @@ from typing import Dict
 
 from requests import get
 
-from pyfishsensedev.library.model import Model
 from pyfishsensedev.library.paths import CACHE_DIRECTORY
 
 
-class OnlineMLModel(ABC, Model):
+class OnlineMLModel(ABC):
     def __init__(self) -> None:
         super().__init__()
 
         self.__lock_fd: Dict[str, int] = {}
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        raise NotImplementedError
 
     @property
     def _model_cache_path(self) -> Path:
