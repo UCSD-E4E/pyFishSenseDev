@@ -18,6 +18,7 @@ onnxruntime-gpu = "^1.19.2"
 kornia = "^0.7.3"
 shapely = "^2.0.6"
 pymupdf = "^1.24.10"
+scikit-learn = "^1.5.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,6 +28,9 @@ onnxoptimizer = "^0.3.13"
 pytest = "^8.3.2"
 nas-unzip = {git = "https://github.com/UCSD-E4E/synology-download.git"}
 tqdm = "^4.66.5"
+ipykernel = "^6.26.0"
+black = "^24.3.0"
+pylint = "^3.2.0"
 
 
 [[tool.poetry.source]]
