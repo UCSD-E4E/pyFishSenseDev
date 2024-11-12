@@ -219,4 +219,4 @@ data/
 !tests/data
 tests/data/*.zip
 
-.devcontainer/
+.devcontainer
