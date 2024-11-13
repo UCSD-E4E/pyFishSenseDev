@@ -15,7 +15,7 @@ class RawProcessor(ImageProcessor):
         self.__gamma = gamma
         self.__has_iterated = True
 
-    def __init__(self) -> Self:
+    def __iter__(self) -> Self:
         self.__has_iterated = False
 
         return self
