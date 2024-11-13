@@ -15,7 +15,7 @@ class RawProcessorOld(ImageProcessor):
         self.__has_iterated = True
         self.enable_histogram_equalization = enable_histogram_equalization
 
-    def __init__(self) -> Self:
+    def __iter__(self) -> Self:
         self.__has_iterated = False
 
         return self
