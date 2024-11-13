@@ -34,4 +34,4 @@ class RawProcessor(ImageProcessor):
             return self.__double_2_uint16(img)
 
     def __double_2_uint16(self, img: np.ndarray) -> np.ndarray:
-        return (img * 65535).astype(np.uint8)
+        return (img * 65535).astype(np.uint16)
