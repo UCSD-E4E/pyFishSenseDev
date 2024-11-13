@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Self
 
+import cv2
 import numpy as np
 import rawpy
 import skimage
@@ -31,7 +32,7 @@ class RawProcessor(ImageProcessor):
             img = skimage.exposure.adjust_gamma(img, gamma=self.__gamma)
             img = skimage.exposure.equalize_adapthist(img)
 
-            return self.__double_2_uint16(img)
+            return cv2.cvtColor(self.__double_2_uint16(img), cv2.COLOR_RGB2BGR)
 
     def __double_2_uint16(self, img: np.ndarray) -> np.ndarray:
         return (img * 65535).astype(np.uint16)
