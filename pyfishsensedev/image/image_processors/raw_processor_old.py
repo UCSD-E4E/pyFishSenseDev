@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Self, Tuple
 
 import cv2
 import numpy as np
@@ -8,11 +8,25 @@ import rawpy
 from pyfishsensedev.image.image_processors.image_processor import ImageProcessor
 
 
-class RawProcessor(ImageProcessor):
-    def __init__(self, enable_histogram_equalization=True):
+class RawProcessorOld(ImageProcessor):
+    def __init__(self, file: Path, enable_histogram_equalization=True):
+        super().__init__(file)
+
+        self.__has_iterated = True
         self.enable_histogram_equalization = enable_histogram_equalization
 
-        super().__init__()
+    def __init__(self) -> Self:
+        self.__has_iterated = False
+
+        return self
+
+    def __next__(self) -> np.ndarray:
+        if self.__has_iterated:
+            raise StopIteration
+
+        self.__has_iterated = True
+
+        return self.load_and_process(self.file)
 
     def load_and_process(self, path: Path) -> np.ndarray:
         with rawpy.imread(path.as_posix()) as raw:

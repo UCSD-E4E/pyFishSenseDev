@@ -1,17 +1,19 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Self
 
 import numpy as np
 
 
 class ImageProcessor(ABC):
-    def __init__(self) -> None:
+    def __init__(self, file: Path) -> None:
         super().__init__()
 
-    @abstractmethod
-    def load_and_process(self, path: Path):
-        raise NotImplementedError
+        self.file = file
+
+    def __iter__(self) -> Self:
+        return self
 
     @abstractmethod
-    def process(self, raw: np.ndarray) -> np.ndarray:
+    def __next__(self) -> np.array:
         raise NotImplementedError
