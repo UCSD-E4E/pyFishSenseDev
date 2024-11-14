@@ -57,11 +57,11 @@ class ColorCorrection:
             self.__spread_data_fraction,
         )
         recovered = run_pipeline(
-            self.__double2img(img, max_value), depth_map.depth_map, args
+            self.__img2double(img, max_value), depth_map.depth_map, args
         )
         sigma_est = (
             estimate_sigma(recovered, channel_axis=2, average_sigmas=True) / 10.0
         )
         recovered = denoise_tv_chambolle(recovered, sigma_est, channel_axis=2)
 
-        return self.__img2double(recovered, max_value, img.dtype)
+        return self.__double2img(recovered, max_value, img.dtype)
