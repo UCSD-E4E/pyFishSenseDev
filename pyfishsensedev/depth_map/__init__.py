@@ -1,1 +1,2 @@
+from pyfishsensedev.depth_map.depth_anything_depth_map import DepthAnythingDepthMap
 from pyfishsensedev.depth_map.laser_depth_map import LaserDepthMap
