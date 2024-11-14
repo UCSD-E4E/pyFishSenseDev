@@ -28,7 +28,9 @@ class RawProcessor(ImageProcessor):
         self.__has_iterated = True
 
         with rawpy.imread(self.file.as_posix()) as raw:
-            img = raw.postprocess(gamma=(1, 1), no_auto_bright=True, output_bps=16)
+            img = raw.postprocess(
+                gamma=(1, 1), no_auto_bright=True, use_camera_wb=True, output_bps=16
+            )
             img = skimage.exposure.adjust_gamma(img, gamma=self.__gamma)
             img = skimage.exposure.equalize_adapthist(img)
 
