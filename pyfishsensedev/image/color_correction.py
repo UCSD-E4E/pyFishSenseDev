@@ -30,6 +30,7 @@ class ColorCorrection:
     ):
         self.__f = f
         self.__l = l
+        self.__p = p
         self.__min_depth = min_depth
         self.__max_depth = max_depth
         self.__spread_data_fraction = spread_data_fraction
@@ -38,6 +39,7 @@ class ColorCorrection:
         args = Args(
             self.__f,
             self.__l,
+            self.__p,
             self.__min_depth,
             self.__max_depth or depth_map.depth_map.max(),
             self.__spread_data_fraction,
