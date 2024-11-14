@@ -5,7 +5,7 @@ from pyfishsensedev.depth_map.depth_map import DepthMap
 from pyfishsensedev.library.seathru import run_pipeline
 
 
-class __Args:
+class Args:
     def __init__(self, f, l, p, min_depth, max_depth, spread_data_fraction):
         self.f = f
         self.l = l
@@ -35,7 +35,7 @@ class ColorCorrection:
         self.__spread_data_fraction = spread_data_fraction
 
     def correct_color(self, img: np.ndarray, depth_map: DepthMap) -> np.ndarray:
-        args = __Args(
+        args = Args(
             self.__f,
             self.__l,
             self.__min_depth,
