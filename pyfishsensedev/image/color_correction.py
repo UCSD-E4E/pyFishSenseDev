@@ -35,7 +35,19 @@ class ColorCorrection:
         self.__max_depth = max_depth
         self.__spread_data_fraction = spread_data_fraction
 
+    def __img2double(self, img: np.ndarray, max_value: float) -> np.ndarray:
+        img_double = img.astype(np.float64)
+
+        return img_double / max_value
+
+    def __double2img(
+        self, double: np.ndarray, max_value: float, dtype: np.dtype
+    ) -> np.ndarray:
+        return (double * max_value).astype(dtype)
+
     def correct_color(self, img: np.ndarray, depth_map: DepthMap) -> np.ndarray:
+        max_value = float(img.max())
+
         args = Args(
             self.__f,
             self.__l,
@@ -44,10 +56,12 @@ class ColorCorrection:
             self.__max_depth or depth_map.depth_map.max(),
             self.__spread_data_fraction,
         )
-        recovered = run_pipeline(img, depth_map.depth_map, args)
+        recovered = run_pipeline(
+            self.__double2img(img, max_value), depth_map.depth_map, args
+        )
         sigma_est = (
             estimate_sigma(recovered, channel_axis=2, average_sigmas=True) / 10.0
         )
         recovered = denoise_tv_chambolle(recovered, sigma_est, channel_axis=2)
 
-        return recovered
+        return self.__img2double(recovered, max_value, img.dtype)
