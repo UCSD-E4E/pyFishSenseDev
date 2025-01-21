@@ -58,18 +58,8 @@ class LaserCalibration:
     def plane_calibrate(
         self,
         laser_points_3d: Iterator[np.ndarray],
-        estimate_laser_calibration: Self,
-        use_gauss_newton=True,
     ) -> None:
-        if use_gauss_newton:
-            state_init = np.zeros(5, dtype=float)
-            state_init[:3] = estimate_laser_calibration.laser_axis
-            state_init[-2:] = estimate_laser_calibration.laser_position[:2]
-
-            laser_params, _ = gauss_newton_estimate_state(laser_points_3d, state_init)
-        else:
-            laser_params = atanasov_calibration_method(laser_points_3d)
-
+        laser_params = atanasov_calibration_method(laser_points_3d)
         self._laser_axis = laser_params[:3]
 
         self._laser_position = np.zeros(3, dtype=float)
