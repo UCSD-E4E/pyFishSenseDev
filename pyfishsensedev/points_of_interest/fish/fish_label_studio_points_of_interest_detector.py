@@ -63,11 +63,11 @@ class FishLabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
                         tail = array
 
                 if head is None or tail is None:
-                    return None
+                    return None, None
 
                 return head, tail
 
             else:
                 raise NotImplementedError
 
-        raise KeyError("laser label cannot be found.")
+        return None, None
