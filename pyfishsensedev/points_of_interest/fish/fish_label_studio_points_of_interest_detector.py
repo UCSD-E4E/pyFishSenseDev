@@ -37,7 +37,7 @@ class FishLabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
                     continue
 
                 if len(item["annotations"][0]["result"]) == 0:
-                    return None
+                    return None, None
 
                 result_array = item["annotations"][0]["result"]
 
