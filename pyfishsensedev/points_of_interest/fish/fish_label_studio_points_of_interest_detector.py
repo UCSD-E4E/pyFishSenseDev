@@ -1,0 +1,2 @@
+class FishLabelStudioPointsOfInterestDetector:
+    pass
