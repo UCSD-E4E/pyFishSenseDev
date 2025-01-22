@@ -70,4 +70,4 @@ class FishLabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
             else:
                 raise NotImplementedError
 
-        return None, None
+        raise KeyError("point of interest label cannot be found.")
