@@ -221,4 +221,3 @@ tests/data/*.zip
 
 !experiments/data
 experiments/cache
-.devcontainer
