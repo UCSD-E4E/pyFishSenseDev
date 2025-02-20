@@ -221,3 +221,5 @@ tests/data/*.zip
 
 !experiments/data
 experiments/cache
+
+poetry_cache
