@@ -7,33 +7,29 @@ from skimage.util import img_as_ubyte
 from tqdm import tqdm
 
 # %%
-rows = 10
-cols = 14
-square_size = 42
+rows = 14
+cols = 10
 
 # %%
 input_directory = Path(
-    "/mnt/fishsense_data/2025.02.27.FishSense.Canyonview/ED-00/FSL-07D/E4ECalib/Laser"
+    "/home/chris/data/2025.02.27.FishSense.Canyonview/ED-00/FSL-07D/E4ECalib"
 )
 files = list(input_directory.rglob("*.ORF"))
 
 output_directory = Path(
-    "/mnt/fishsense_data/2025.02.27.FishSense.Canyonview/output/FSL-07D/E4ECalib/Laser"
+    "/home/chris/data/2025.02.27.FishSense.Canyonview/output/FSL-07D/E4ECalib"
 )
-output_directory.mkdir(exist_ok=True)
+output_directory.mkdir(exist_ok=True, parents=True)
 
 
 # %%
 raw_processor = RawProcessor()
 
 # %%
-images = [img_as_ubyte(raw_processor.process(f)) for f in tqdm(files)]
-
-# %%
-corners_rough_list = []
-
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-for idx, (file, image) in enumerate(zip(tqdm(files), images)):
+for idx, file in enumerate(tqdm(files)):
+    image = img_as_ubyte(raw_processor.process(file))
+
     target = (
         output_directory
         / file.parent.relative_to(input_directory)
@@ -53,12 +49,9 @@ for idx, (file, image) in enumerate(zip(tqdm(files), images)):
     )
     cv2.imwrite(target.absolute().as_posix(), debug_image)
 
-    corners_rough_list.append(corners_rough)
+    if not ret:
+        continue
 
-# %%
-for idx, (corners_rough, file, image) in enumerate(
-    zip(corners_rough_list, tqdm(files), images)
-):
     target = (
         output_directory
         / file.parent.relative_to(input_directory)
