@@ -7,17 +7,20 @@ from skimage.util import img_as_ubyte
 from tqdm import tqdm
 
 # %%
-rows = 14
-cols = 10
+# rows = 14
+# cols = 10
+
+rows = 17
+cols = 24
 
 # %%
 input_directory = Path(
-    "/home/chris/data/2025.02.27.FishSense.Canyonview/ED-00/FSL-07D/E4ECalib"
+    "/home/chris/data/2025.02.27.FishSense.Canyonview/ED-00/FSL-07D/Calibio"
 )
 files = list(input_directory.rglob("*.ORF"))
 
 output_directory = Path(
-    "/home/chris/data/2025.02.27.FishSense.Canyonview/output/FSL-07D/E4ECalib"
+    "/home/chris/data/2025.02.27.FishSense.Canyonview/output/FSL-07D/Calibio"
 )
 output_directory.mkdir(exist_ok=True, parents=True)
 
@@ -45,7 +48,7 @@ for idx, file in enumerate(tqdm(files)):
     ret, corners_rough = cv2.findChessboardCorners(gray, (rows, cols), None)
 
     debug_image = cv2.drawChessboardCorners(
-        image, (rows, cols), corners_rough.get(), ret
+        image.copy(), (rows, cols), corners_rough.get(), ret
     )
     cv2.imwrite(target.absolute().as_posix(), debug_image)
 
@@ -66,5 +69,7 @@ for idx, file in enumerate(tqdm(files)):
     # opencv can attempt to improve the checkerboard coordinates
     corners = cv2.cornerSubPix(gray, corners_rough, conv_size, (-1, -1), criteria)
 
-    debug_image = cv2.drawChessboardCorners(image, (rows, cols), corners.get(), ret)
+    debug_image = cv2.drawChessboardCorners(
+        image.copy(), (rows, cols), corners.get(), ret
+    )
     cv2.imwrite(target.absolute().as_posix(), debug_image)
