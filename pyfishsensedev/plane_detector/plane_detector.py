@@ -75,7 +75,7 @@ class PlaneDetector(ABC):
         if rotation is None or translation is None or body_points is None:
             return None
 
-        board_plane_points = (rotation @ body_points[[0, 1, 14]].T + translation).T
+        board_plane_points = (rotation @ body_points.T + translation).T
         return board_plane_points
 
     def _get_normal_vector_camera_space(
