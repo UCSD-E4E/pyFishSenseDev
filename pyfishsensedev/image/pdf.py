@@ -33,15 +33,21 @@ class Pdf:
 
     @property
     def width(self) -> int:
-        _, width = self.__image.shape
+        _, width, _ = self.__image.shape
 
         return width
 
     @property
     def height(self) -> int:
-        height, _ = self.__image.shape
+        height, _, _ = self.__image.shape
 
         return height
+
+    @property
+    def channels(self) -> int:
+        _, _, channels = self.__image.shape
+
+        return channels
 
     def get_physical_measurements(self, points: np.ndarray) -> np.ndarray:
         return (points / float(Pdf.DPI)) * INCH_TO_M
