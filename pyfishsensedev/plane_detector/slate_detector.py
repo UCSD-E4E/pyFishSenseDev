@@ -72,7 +72,7 @@ class SlateDetector(PlaneDetector):
         template_matches, _ = self._get_template_matches()
 
         if template_matches is None:
-            return None
+            return False
 
         num_matches, _ = template_matches.shape
 

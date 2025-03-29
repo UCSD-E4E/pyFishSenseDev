@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import cv2
 import numpy as np
 
@@ -14,7 +16,7 @@ class CheckerboardDetector(PlaneDetector):
         self._columns = columns
         self._square_size = square_size
 
-    def _get_points_image_space(self) -> np.ndarray:
+    def _get_points_image_space(self) -> np.ndarray | None:
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         gray = cv2.cvtColor(cv2.UMat(self.image), cv2.COLOR_RGB2GRAY)
 
