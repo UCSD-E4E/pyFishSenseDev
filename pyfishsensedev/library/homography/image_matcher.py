@@ -6,18 +6,13 @@ Due to licensing issues, make sure you are using the correct version of SuperPoi
 
 from typing import Tuple
 
-import torch
-
-from pyfishsensedev.library.homography.models.lightglue import LightGlue
-from pyfishsensedev.library.homography.models.superpoint import (
-    SuperPoint as NonCommercialSuperPoint,
-)
-from pyfishsensedev.library.homography.models.superpoint_pytorch import SuperPoint
-from pyfishsensedev.library.homography.utils import Preprocessor, rbd
-
 
 class ImageMatcher:
-    def __init__(self, template: torch.Tensor, com_license=True, processing_conf={}):
+    import torch
+
+    def __init__(
+        self, template: torch.Tensor, device: str, com_license=True, processing_conf={}
+    ):
         self.image0 = template
         self.feats0 = None
         self.com_license = com_license
@@ -30,6 +25,7 @@ class ImageMatcher:
         self.extractor_conf = (
             processing_conf["extractor"] if "extractor" in processing_conf else {}
         )
+        self.__device = device
 
     def __call__(self, image1: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Given a calibration image, return its matches with the template.
@@ -39,12 +35,23 @@ class ImageMatcher:
             feats0_matches
             feats1_matches
         """
+        import torch
+
+        from pyfishsensedev.library.homography.models.lightglue import LightGlue
+        from pyfishsensedev.library.homography.models.superpoint import (
+            SuperPoint as NonCommercialSuperPoint,
+        )
+        from pyfishsensedev.library.homography.models.superpoint_pytorch import (
+            SuperPoint,
+        )
+        from pyfishsensedev.library.homography.utils import Preprocessor, rbd
+
         # Preprocess our input image
         preprocessor = Preprocessor(**self.preprocess_conf)
         image1_preprocessed = preprocessor(image1)
 
         with torch.no_grad():
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = self.__device
             torch.set_grad_enabled(False)
 
             # SuperPoint+LightGlue
@@ -99,5 +106,7 @@ class ImageMatcher:
             feats0_keypoints[matches[..., 0]],
             feats1_keypoints[matches[..., 1]],
         )
+
+        return feats0_matches, feats1_matches
 
         return feats0_matches, feats1_matches
