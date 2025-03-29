@@ -10,24 +10,26 @@ from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
 class SlateDetector(PlaneDetector):
-    def __init__(self, image: np.ndarray[np.uint8], pdf: Pdf) -> None:
+    def __init__(self, image: np.ndarray[np.uint8], pdf: Pdf, device: str) -> None:
         super().__init__(image)
 
-        self._pdf = pdf
-        self._tensor_template = numpy_image_to_torch(self._pdf.image)
-        self._ran_template_matches = False
-        self._template_matches = None
-        self._image_matches = None
+        self.__pdf = pdf
+        self.__tensor_template = numpy_image_to_torch(self.__pdf.image)
+        self.__ran_template_matches = False
+        self.__template_matches = None
+        self.__image_matches = None
+        self.__device = device
 
     def _get_template_matches(self) -> Tuple[torch.Tensor, torch.Tensor]:
-        if not self._ran_template_matches:
+        if not self.__ran_template_matches:
             max_num_keypoints = 0
 
             for scale in range(1, 20):
                 scale = float(scale) / 10.0
 
                 image_matcher = ImageMatcher(
-                    self._tensor_template,
+                    self.__tensor_template,
+                    self.__device,
                     com_license=False,
                     processing_conf={
                         "preprocess": {"gamma": 2.0, "sharpness": None, "scale": scale},
@@ -43,12 +45,12 @@ class SlateDetector(PlaneDetector):
                 if num_keypoints > max_num_keypoints:
                     max_num_keypoints = num_keypoints
 
-                    self._template_matches = template_matches
-                    self._image_matches = image_matches
+                    self.__template_matches = template_matches
+                    self.__image_matches = image_matches
 
-            self._ran_template_matches = True
+            self.__ran_template_matches = True
 
-        return self._template_matches, self._image_matches
+        return self.__template_matches, self.__image_matches
 
     def _get_points_image_space(self):
         _, image_matches = self._get_template_matches()
@@ -60,7 +62,7 @@ class SlateDetector(PlaneDetector):
 
         num_points, _ = template_matches.shape
         objp = np.zeros((num_points, 3), np.float32)
-        objp[:, :2] = self._pdf.get_physical_measurements(
+        objp[:, :2] = self.__pdf.get_physical_measurements(
             template_matches.cpu().numpy()
         )
 
