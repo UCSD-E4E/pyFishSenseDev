@@ -3,14 +3,20 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
 from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
 class CheckerboardDetector(PlaneDetector):
     def __init__(
-        self, image: np.ndarray[np.uint8], rows: int, columns: int, square_size: float
+        self,
+        image: np.ndarray[np.uint8],
+        rows: int,
+        columns: int,
+        square_size: float,
+        lens_calibration: LensCalibration,
     ) -> None:
-        super().__init__(image)
+        super().__init__(image, lens_calibration)
 
         self._rows = rows
         self._columns = columns

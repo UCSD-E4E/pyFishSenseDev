@@ -1,8 +1,10 @@
+from copy import copy
 from typing import Tuple
 
 import numpy as np
 import torch
 
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
 from pyfishsensedev.image.pdf import Pdf
 from pyfishsensedev.library.homography.image_matcher import ImageMatcher
 from pyfishsensedev.library.homography.utils import numpy_image_to_torch
@@ -10,43 +12,68 @@ from pyfishsensedev.plane_detector.plane_detector import PlaneDetector
 
 
 class SlateDetector(PlaneDetector):
-    def __init__(self, image: np.ndarray[np.uint8], pdf: Pdf, device: str) -> None:
-        super().__init__(image)
+    def __init__(
+        self,
+        image: np.ndarray[np.uint8],
+        pdf: Pdf,
+        lens_calibration: LensCalibration,
+        device: str,
+        try_multiple_slate_rotations: bool = False,
+    ) -> None:
+        super().__init__(image, lens_calibration)
 
         self.__pdf = pdf
-        self.__tensor_template = numpy_image_to_torch(self.__pdf.image)
         self.__ran_template_matches = False
         self.__template_matches = None
         self.__image_matches = None
         self.__device = device
+        self.__try_multiple_slate_rotations = try_multiple_slate_rotations
+
+    @property
+    def pdf(self) -> Pdf:
+        return self.__pdf
 
     def _get_template_matches(self) -> Tuple[torch.Tensor, torch.Tensor]:
         if not self.__ran_template_matches:
+            if self.__try_multiple_slate_rotations:
+                rotated_pdf = copy(self.__pdf)
+                rotated_pdf.rotate(180)
+                pdfs = [self.__pdf, rotated_pdf]
+            else:
+                pdfs = [self.__pdf]
+
             max_num_keypoints = 0
+            for pdf in pdfs:
+                tensor_template = numpy_image_to_torch(pdf.image)
 
-            for scale in range(1, 20):
-                scale = float(scale) / 10.0
+                for scale in range(1, 20):
+                    scale = float(scale) / 10.0
 
-                image_matcher = ImageMatcher(
-                    self.__tensor_template,
-                    self.__device,
-                    com_license=False,
-                    processing_conf={
-                        "preprocess": {"gamma": 2.0, "sharpness": None, "scale": scale},
-                        "matcher": {"filter_threshold": 0.5},
-                    },
-                )
+                    image_matcher = ImageMatcher(
+                        tensor_template,
+                        self.__device,
+                        com_license=False,
+                        processing_conf={
+                            "preprocess": {
+                                "gamma": 2.0,
+                                "sharpness": None,
+                                "scale": scale,
+                            },
+                            "matcher": {"filter_threshold": 0.5},
+                        },
+                    )
 
-                template_matches, image_matches = image_matcher(
-                    numpy_image_to_torch(self.image)
-                )
+                    template_matches, image_matches = image_matcher(
+                        numpy_image_to_torch(self.image)
+                    )
 
-                num_keypoints, _ = template_matches.shape
-                if num_keypoints > max_num_keypoints:
-                    max_num_keypoints = num_keypoints
+                    num_keypoints, _ = template_matches.shape
+                    if num_keypoints > max_num_keypoints:
+                        max_num_keypoints = num_keypoints
+                        self.__pdf = pdf
 
-                    self.__template_matches = template_matches
-                    self.__image_matches = image_matches
+                        self.__template_matches = template_matches
+                        self.__image_matches = image_matches
 
             self.__ran_template_matches = True
 

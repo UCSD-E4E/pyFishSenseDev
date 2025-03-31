@@ -6,15 +6,17 @@ from typing import Tuple
 import cv2
 import numpy as np
 
+from pyfishsensedev.calibration.lens_calibration import LensCalibration
 from pyfishsensedev.library.laser_parallax import image_coordinate_to_projected_point
 
 
 class PlaneDetector(ABC):
-    def __init__(self, image: np.ndarray) -> None:
+    def __init__(self, image: np.ndarray, lens_calibration: LensCalibration) -> None:
         self._image = image
         self._height, self._width, _ = image.shape
         self._points_image_space: np.ndarray | None = None
         self._points_body_space: np.ndarray | None = None
+        self._lens_calibration = lens_calibration
 
     @property
     def image(self) -> np.ndarray:
@@ -27,6 +29,10 @@ class PlaneDetector(ABC):
     @property
     def height(self) -> int:
         return self._height
+
+    @property
+    def lens_calibration(self) -> LensCalibration:
+        return self._lens_calibration
 
     @abstractmethod
     def _get_points_image_space(self) -> np.ndarray | None:
@@ -51,13 +57,13 @@ class PlaneDetector(ABC):
         return self._points_body_space
 
     def _get_body_to_camera_space_transform(
-        self, camera_matrix: np.ndarray
+        self,
     ) -> Tuple[np.ndarray | None, np.ndarray | None]:
         empty_dist_coeffs = np.zeros((5,))
         ret, rotation_vectors, translation = cv2.solvePnP(
             self.points_body_space,
             self.points_image_space,
-            camera_matrix,
+            self.lens_calibration.camera_matrix,
             empty_dist_coeffs,
         )
 
@@ -67,11 +73,8 @@ class PlaneDetector(ABC):
         rotation, _ = cv2.Rodrigues(rotation_vectors)
         return rotation, translation
 
-    def _get_points_camera_space(
-        self,
-        camera_matrix: np.ndarray,
-    ) -> np.ndarray | None:
-        rotation, translation = self._get_body_to_camera_space_transform(camera_matrix)
+    def _get_points_camera_space(self) -> np.ndarray | None:
+        rotation, translation = self._get_body_to_camera_space_transform()
         body_points = self.points_body_space
 
         if rotation is None or translation is None or body_points is None:
@@ -80,11 +83,8 @@ class PlaneDetector(ABC):
         board_plane_points = (rotation @ body_points.T + translation).T
         return board_plane_points
 
-    def _get_normal_vector_camera_space(
-        self,
-        camera_matrix: np.ndarray,
-    ) -> np.ndarray | None:
-        camera_points = self._get_points_camera_space(camera_matrix)
+    def _get_normal_vector_camera_space(self) -> np.ndarray | None:
+        camera_points = self._get_points_camera_space()
 
         if camera_points is None:
             return camera_points
@@ -95,20 +95,17 @@ class PlaneDetector(ABC):
         )
 
     def project_point_onto_plane_camera_space(
-        self,
-        point_image_space: np.ndarray,
-        camera_matrix: np.ndarray,
-        inverted_camera_matrix: np.ndarray,
+        self, point_image_space: np.ndarray
     ) -> np.ndarray | None:
         ray = (
             image_coordinate_to_projected_point(
-                point_image_space, inverted_camera_matrix
+                point_image_space, self.lens_calibration.inverted_camera_matrix
             )
             * -1
         )
 
-        camera_points = self._get_points_camera_space(camera_matrix)
-        normal_vector = self._get_normal_vector_camera_space(camera_matrix)
+        camera_points = self._get_points_camera_space()
+        normal_vector = self._get_normal_vector_camera_space()
 
         if camera_points is None or normal_vector is None:
             return None
