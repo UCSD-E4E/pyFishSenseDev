@@ -17,7 +17,13 @@ class Pdf:
             pixmap: pymupdf.Pixmap = page.get_pixmap(dpi=Pdf.DPI)
             bytes = np.frombuffer(pixmap.samples, dtype=np.uint8)
 
-            self.__image = bytes.reshape(pixmap.height, pixmap.width, pixmap.n)
+            image = bytes.reshape(pixmap.height, pixmap.width, pixmap.n)
+            image = cv2.UMat(image)
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+            _, image = cv2.threshold(image, 60, 255, cv2.THRESH_BINARY)
+
+            self.__image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR).get()
 
     @property
     def image(self) -> np.ndarray:
