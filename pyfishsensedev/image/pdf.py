@@ -21,7 +21,7 @@ class Pdf:
             image = cv2.UMat(image)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
-            _, image = cv2.threshold(image, 60, 255, cv2.THRESH_BINARY)
+            _, image = cv2.threshold(image, 125, 255, cv2.THRESH_BINARY)
 
             self.__image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR).get()
 
