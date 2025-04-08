@@ -66,4 +66,4 @@ class LabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
                 return fork, snout
 
         print(f"Couldn't find image {self.__image_path}")
-        return None
+        return None, None
