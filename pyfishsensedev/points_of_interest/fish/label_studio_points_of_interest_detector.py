@@ -41,7 +41,7 @@ class LabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
                     continue
 
                 if len(item["annotations"][0]["result"]) == 0:
-                    return None
+                    return None, None
             else:
                 raise NotImplementedError
 
