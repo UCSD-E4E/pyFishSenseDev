@@ -23,7 +23,6 @@ dependencies = [
     "pywavelets (>=1.8.0,<2.0.0)",
     "torch (>=2.6.0,<3.0.0)",
     "torchvision (>=0.21.0,<0.22.0)",
-    "sam-2 @ git+https://github.com/facebookresearch/sam2.git",
     "pyaqua3ddev @ git+https://github.com/UCSD-E4E/pyAqua3dDev.git",
 ]
 
@@ -38,6 +37,10 @@ black = "^25.1.0"
 pylint = "^3.3.4"
 ipywidgets = "^8.1.5"
 nas-unzip = {git = "https://github.com/UCSD-E4E/synology-download.git"}
+
+
+[tool.poetry.group.experiments.dependencies]
+sam-2 = {git = "https://github.com/facebookresearch/sam2.git"}
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
