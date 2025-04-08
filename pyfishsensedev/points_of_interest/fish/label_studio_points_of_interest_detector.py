@@ -65,5 +65,5 @@ class LabelStudioPointsOfInterestDetector(PointsOfInterestDetector):
             if fork is not None and snout is not None:
                 return fork, snout
 
-        print(f"Couldn't find image {self.__image_path}")
+        print(f"Couldn't find image {self.__image_path} with hash {self.__hash}")
         return None, None
