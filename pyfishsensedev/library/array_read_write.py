@@ -1,11 +1,12 @@
 """
-    Module for reading and writing numpy arrays
+Module for reading and writing numpy arrays
 """
 
 import io
 import json
 import tarfile
 from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 
@@ -65,10 +66,11 @@ def read_numpy_array(file: tarfile.TarFile, name: str) -> np.ndarray:
     return _read_numpy_array(file.extractfile(name))
 
 
-def read_camera_calibration(file_path: str):
-    with tarfile.open(file_path, "r:gz") as f:
-        calibration_matrix = read_numpy_array(f, "_calibration_matrix.npy")
-        distortion_coeffs = read_numpy_array(f, "_distortion_coefficients.npy")
+def read_camera_calibration(file_path: Path):
+    with file_path.open("rb") as f:
+        with tarfile.open(fileobj=f) as t:
+            calibration_matrix = read_numpy_array(t, "_calibration_matrix.npy")
+            distortion_coeffs = read_numpy_array(t, "_distortion_coefficients.npy")
     return calibration_matrix, distortion_coeffs
 
 

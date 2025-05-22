@@ -48,7 +48,7 @@ class LensCalibration:
 
     def load(self, calibration_path: Path):
         self._camera_matrix, self._distortion_coefficients = read_camera_calibration(
-            calibration_path.absolute().as_posix()
+            calibration_path.absolute()
         )
 
     def save(self, calibration_path: Path):
