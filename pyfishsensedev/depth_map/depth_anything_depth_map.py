@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from depth_anything_metric import load_depth_model
 from PIL import Image
 from transformers import pipeline
 
@@ -19,8 +20,13 @@ class DepthAnythingDepthMap(DepthMap):
             model="depth-anything/Depth-Anything-V2-Small-hf",
             device=device,
         )
+
+        model = load_depth_model(encoder="vitl", dataset="hypersim", device=device)
+
         image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-        self.__depth_map = 255.0 - np.array(pipe(image)["depth"], dtype=float) * scale
+
+        self.__depth_map = model.infer_image(image)
+        # self.__depth_map = 255.0 - np.array(pipe(image)["depth"], dtype=float) * scale
 
     def rescale(self, scale: float):
         self.__depth_map *= scale
